@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       console.error(`Upstream error ${upstream.status}: ${rawError}`);
 
       // Default to clear limit/quota warning as requested by user
-      let cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau server sedang sibuk. Silakan coba beberapa saat lagi atau gunakan model lain seperti Gemini 3.8 Flash.";
+      let cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau server sedang sibuk. Silakan coba beberapa saat lagi atau gunakan model lain.";
 
       try {
         const parsed = JSON.parse(rawError);
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
           rawMessage.includes("capacity") ||
           rawMessage.includes("overloaded")
         ) {
-          cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau kapasitas sedang penuh. Silakan coba beberapa saat lagi atau gunakan model lain seperti Gemini 3.8 Flash.";
+          cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau kapasitas sedang penuh. Silakan coba beberapa saat lagi atau gunakan model lain.";
         } else if (rawMessage) {
           const innerJsonMatch = rawMessage.match(/\{.*"message":\s*"([^"]+)".*\}/);
           const innerText = innerJsonMatch && innerJsonMatch[1] ? innerJsonMatch[1] : rawMessage;
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
             innerText.includes("credits") ||
             innerText.includes("limit")
           ) {
-            cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai. Silakan coba beberapa saat lagi atau beralih ke model lain seperti Gemini 3.8 Flash.";
+            cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai. Silakan coba beberapa saat lagi atau beralih ke model lain.";
           } else {
             cleanError = `Batas penggunaan (limit) tercapai: ${innerText.replace(/\[\d+\]:\s*/, "")}`;
           }
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
           upstream.status === 429 ||
           upstream.status === 503
         ) {
-          cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau kapasitas server sedang penuh. Silakan coba beberapa saat lagi atau gunakan model lain seperti Gemini 3.8 Flash.";
+          cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau kapasitas server sedang penuh. Silakan coba beberapa saat lagi atau gunakan model lain.";
         }
       }
 
