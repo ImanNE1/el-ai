@@ -161,3 +161,34 @@
     box-shadow: 0 2px 16px rgba(239, 68, 68, 0.5);
   }
 }
+
+/* ── Mobile Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .inputWrapper {
+    padding: 0 10px 10px;
+  }
+
+  .inputContainer {
+    padding: 8px 10px;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  .textarea {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+    line-height: 1.4;
+    padding: 4px 2px;
+    max-height: 120px;
+  }
+
+  .sendButton {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+  }
+
+  .footerRow {
+    display: none;
+  }
+}
+

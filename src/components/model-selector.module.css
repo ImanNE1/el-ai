@@ -260,3 +260,37 @@
   color: var(--text-muted);
   font-size: 12.5px;
 }
+
+/* ── Mobile Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .trigger {
+    padding: 6px 8px;
+    border-radius: 9px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .modelName {
+    max-width: 90px;
+    font-size: 11.5px;
+  }
+
+  .dropdown {
+    width: min(calc(100vw - 20px), 320px);
+    right: -20px;
+    max-height: 70vh;
+    padding: 6px;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .modelName {
+    max-width: 72px;
+  }
+
+  .dropdown {
+    right: -40px;
+  }
+}
+

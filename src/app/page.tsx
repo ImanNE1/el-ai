@@ -144,10 +144,16 @@ export default function ChatPage() {
     const fresh = createNewSession(selectedModel);
     currentSessionIdRef.current = fresh.id;
     loadMessages([]);
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   }, [createNewSession, selectedModel, loadMessages]);
 
   const handleSelectSession = useCallback(
     (sessionId: string) => {
+      if (typeof window !== "undefined" && window.innerWidth < 768) {
+        setSidebarOpen(false);
+      }
       if (sessionId === activeSessionId) return;
       switchSession(sessionId);
       const target = sessions.find((s) => s.id === sessionId);

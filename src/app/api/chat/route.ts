@@ -15,6 +15,8 @@ Tone & Language:
 - Write in fluent, natural, and eloquent Indonesian (or the user's language).
 - Never use telegraphic, chopped, or overly compressed sentences. Write full, flowing, grammatically complete explanations.`;
 
+export const maxDuration = 60;
+
 /**
  * POST /api/chat
  * Proxies chat requests to the upstream OpenAI-compatible API.
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (!apiBase || !apiKey) {
       console.error("Missing OPENAI_API_BASE or OPENAI_API_KEY");
       return NextResponse.json(
-        { error: "Server configuration error." },
+        { error: "Server configuration error: Missing OPENAI_API_BASE or OPENAI_API_KEY. Harap tambahkan di Environment Variables Vercel." },
         { status: 500 }
       );
     }

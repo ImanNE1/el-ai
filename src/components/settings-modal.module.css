@@ -432,3 +432,57 @@
   background: var(--accent-secondary);
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
+
+/* ── Mobile Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 10px;
+  }
+
+  .modal {
+    max-height: 92vh;
+    border-radius: 16px;
+  }
+
+  .header {
+    padding: 14px 16px 12px;
+  }
+
+  .headerTitle {
+    font-size: 15px;
+  }
+
+  .tabs {
+    padding: 6px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .body {
+    padding: 16px 14px;
+    gap: 16px;
+  }
+
+  .themeGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .themeCard {
+    padding: 10px 12px;
+  }
+
+  .footer {
+    padding: 10px 14px;
+  }
+}
+

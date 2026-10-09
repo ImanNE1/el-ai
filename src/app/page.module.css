@@ -323,23 +323,118 @@
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .header {
-    padding: 10px 14px;
+    padding: 8px 12px;
   }
 
   .headerSubtitle,
-  .newChatHeaderBtn span {
+  .newChatHeaderBtn span,
+  .headerButton span {
     display: none;
   }
 
   .headerTitle {
-    font-size: 14.5px;
+    font-size: 14px;
+  }
+
+  .newChatHeaderBtn,
+  .headerButton {
+    padding: 6px 8px;
+  }
+
+  .iconBtn {
+    width: 33px;
+    height: 33px;
   }
 
   .welcomeTitle {
-    font-size: 22px;
+    font-size: 21px;
   }
 
-  .headerButton span {
-    display: none;
+  .welcomeSubtitle {
+    font-size: 13px;
+    max-width: 100%;
+  }
+
+  .messagesArea {
+    padding: 14px 0;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .headerLeft {
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+  }
+
+  .logo svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .sidebarToggle {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .headerRight {
+    gap: 3px;
+  }
+
+  .newChatHeaderBtn,
+  .headerButton {
+    padding: 5px 6px;
+    border-radius: 8px;
+  }
+
+  .iconBtn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  .activeGemBadge {
+    padding: 3px 6px;
+    font-size: 10.5px;
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .welcome {
+    padding: 20px 12px;
+    gap: 10px;
+  }
+
+  .welcomeIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  .welcomeTitle {
+    font-size: 18px;
+  }
+
+  .errorToast {
+    padding: 0 10px;
+  }
+
+  .errorContent {
+    padding: 8px 12px;
+    font-size: 12px;
   }
 }

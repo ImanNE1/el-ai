@@ -50,6 +50,8 @@ interface UpstreamModel {
   };
 }
 
+export const maxDuration = 60;
+
 export async function GET() {
   try {
     const apiBase = process.env.OPENAI_API_BASE;
@@ -57,7 +59,7 @@ export async function GET() {
 
     if (!apiBase || !apiKey) {
       return NextResponse.json(
-        { error: "Server configuration error." },
+        { error: "Server configuration error: Missing OPENAI_API_BASE or OPENAI_API_KEY." },
         { status: 500 }
       );
     }
