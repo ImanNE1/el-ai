@@ -1,0 +1,434 @@
+/* ── Settings Modal Styles ─────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.18s ease-out;
+}
+
+.modal {
+  width: 100%;
+  max-width: 620px;
+  max-height: 85vh;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-hover);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-primary);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── Modal Header ──────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.closeButton:hover {
+  color: var(--text-primary);
+  background: var(--border-subtle);
+}
+
+/* ── Tabs Navigation ───────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 24px;
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tabBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabBtn:hover {
+  color: var(--text-primary);
+  background: var(--border-subtle);
+}
+
+.tabBtnActive {
+  color: #fff;
+  background: var(--accent-primary);
+}
+
+[data-theme="light"] .tabBtnActive {
+  color: #fff;
+  background: var(--accent-primary);
+}
+
+/* ── Body Content ──────────────────────────────────────────── */
+.body {
+  padding: 22px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scrollbar-width: thin;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sectionTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sectionDesc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Theme Options ─────────────────────────────────────────── */
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.themeCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.themeCard:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+.themeCardActive {
+  border-color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.08);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.12);
+}
+
+.themeCardIcon {
+  font-size: 22px;
+}
+
+.themeCardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.themeCardTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.themeCardSub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ── Gem Skills List ───────────────────────────────────────── */
+.gemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gemCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.gemCard:hover {
+  border-color: var(--border-hover);
+}
+
+.gemCardActive {
+  border-color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.09);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.1);
+}
+
+.gemLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.gemIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.gemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.gemNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gemName {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.gemBadge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.gemDesc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.gemDeleteBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gemDeleteBtn:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* ── Custom Gem Creator Form ───────────────────────────────── */
+.createGemBox {
+  border: 1px dashed var(--border-hover);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: rgba(99, 102, 241, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.createGemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.createGemHeaderTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.formInput {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.formInput:focus {
+  border-color: var(--accent-primary);
+}
+
+.formTextarea {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease;
+}
+
+.formTextarea:focus {
+  border-color: var(--accent-primary);
+}
+
+.createSubmitBtn {
+  align-self: flex-end;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-primary);
+  color: white;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.createSubmitBtn:hover {
+  background: var(--accent-secondary);
+}
+
+/* ── Personal Instructions ─────────────────────────────────── */
+.instructionsBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.doneBtn {
+  padding: 8px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.doneBtn:hover {
+  background: var(--accent-secondary);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
