@@ -111,8 +111,8 @@ export default function ChatPage() {
       // Instant direct scroll during streaming to prevent smooth scroll animation stuttering
       container.scrollTop = container.scrollHeight;
     } else {
-      // Smooth scroll when message sending begins or streaming completes
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      // Smooth container-only scroll when message completes, NEVER scrolling the window/header
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
     }
   }, [messages, isStreaming]);
 
