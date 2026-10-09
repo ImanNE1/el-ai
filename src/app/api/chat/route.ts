@@ -108,30 +108,48 @@ export async function POST(request: NextRequest) {
       const rawError = await upstream.text().catch(() => "Unknown upstream error");
       console.error(`Upstream error ${upstream.status}: ${rawError}`);
 
-      let cleanError = "Failed to get response from AI service.";
+      // Default to clear limit/quota warning as requested by user
+      let cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau server sedang sibuk. Silakan coba beberapa saat lagi atau gunakan model lain seperti Gemini 3.8 Flash.";
 
       try {
         const parsed = JSON.parse(rawError);
-        const rawMessage = parsed.error?.message || parsed.message || "";
+        const rawMessage = (parsed.error?.message || parsed.message || "").toLowerCase();
 
-        if (rawMessage.includes("Paid Model - Credits Required") || rawMessage.includes("[402]") || rawMessage.includes("Credits Required")) {
-          cleanError = "This model requires external credits on this provider. Please select a free model like GPT-4o-mini, GPT-4o, or Grok 4.7.";
-        } else if (rawMessage.includes("not supported") || rawMessage.includes("model_not_supported")) {
-          cleanError = "The selected model is currently unavailable on this gateway. Please switch to another model.";
+        if (
+          rawMessage.includes("credits") ||
+          rawMessage.includes("402") ||
+          rawMessage.includes("quota") ||
+          rawMessage.includes("limit") ||
+          rawMessage.includes("not supported") ||
+          rawMessage.includes("not_supported") ||
+          rawMessage.includes("not found") ||
+          rawMessage.includes("capacity") ||
+          rawMessage.includes("overloaded")
+        ) {
+          cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau kapasitas sedang penuh. Silakan coba beberapa saat lagi atau gunakan model lain seperti Gemini 3.8 Flash.";
         } else if (rawMessage) {
-          // If the message has nested JSON string, try to parse it
           const innerJsonMatch = rawMessage.match(/\{.*"message":\s*"([^"]+)".*\}/);
-          if (innerJsonMatch && innerJsonMatch[1]) {
-            cleanError = innerJsonMatch[1];
+          const innerText = innerJsonMatch && innerJsonMatch[1] ? innerJsonMatch[1] : rawMessage;
+          if (
+            innerText.includes("not supported") ||
+            innerText.includes("not found") ||
+            innerText.includes("credits") ||
+            innerText.includes("limit")
+          ) {
+            cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai. Silakan coba beberapa saat lagi atau beralih ke model lain seperti Gemini 3.8 Flash.";
           } else {
-            cleanError = rawMessage.replace(/\[\d+\]:\s*/, "");
+            cleanError = `Batas penggunaan (limit) tercapai: ${innerText.replace(/\[\d+\]:\s*/, "")}`;
           }
         }
       } catch {
-        if (upstream.status === 404) {
-          cleanError = "Model endpoint not found. Please try a different model.";
-        } else if (upstream.status === 429) {
-          cleanError = "Upstream provider rate limit reached. Please wait a moment.";
+        if (
+          upstream.status === 404 ||
+          upstream.status === 400 ||
+          upstream.status === 402 ||
+          upstream.status === 429 ||
+          upstream.status === 503
+        ) {
+          cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai atau kapasitas server sedang penuh. Silakan coba beberapa saat lagi atau gunakan model lain seperti Gemini 3.8 Flash.";
         }
       }
 
