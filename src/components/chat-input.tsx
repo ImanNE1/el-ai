@@ -1,12 +1,13 @@
 /**
  * ChatInput component — textarea with auto-resize,
- * multimodal image attachment support (file picker, clipboard paste, drag & drop),
- * thumbnail previews, character count, send/stop button, and keyboard shortcuts.
+ * multimodal attachment support (images + PDF, Word, Excel, CSV, TXT documents),
+ * thumbnail & document previews, character count, send/stop button, and keyboard shortcuts.
  */
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import type { TranslationDictionary } from "@/i18n/translations";
+import type { AttachedDoc } from "@/hooks/use-chat";
 import {
   optimizeImageFile,
   getImagesFromClipboard,
@@ -16,7 +17,7 @@ import {
 import styles from "./chat-input.module.css";
 
 interface ChatInputProps {
-  onSend: (message: string, images?: string[]) => void;
+  onSend: (message: string, images?: string[], documents?: AttachedDoc[]) => void;
   onStop: () => void;
   isStreaming: boolean;
   disabled?: boolean;
@@ -27,6 +28,79 @@ interface ChatInputProps {
 }
 
 const MAX_CHAR_LIMIT = 4000;
+const MAX_DOC_COUNT = 5;
+const SUPPORTED_DOC_EXTS = [
+  "pdf",
+  "docx",
+  "xlsx",
+  "xls",
+  "csv",
+  "txt",
+  "md",
+  "markdown",
+  "json",
+  "sql",
+  "yaml",
+  "yml",
+];
+
+function formatFileSize(bytes: number): string {
+  if (!bytes || bytes <= 0) return "0 B";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function getDocIcon(type: string) {
+  switch (type.toLowerCase()) {
+    case "pdf":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="9" y1="13" x2="15" y2="13" />
+          <line x1="9" y1="17" x2="13" y2="17" />
+        </svg>
+      );
+    case "docx":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="8" y1="13" x2="16" y2="13" />
+          <line x1="8" y1="17" x2="16" y2="17" />
+        </svg>
+      );
+    case "xlsx":
+    case "xls":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="3" y1="15" x2="21" y2="15" />
+          <line x1="9" y1="3" x2="9" y2="21" />
+          <line x1="15" y1="3" x2="15" y2="21" />
+        </svg>
+      );
+    case "csv":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <path d="M8 13h2" />
+          <path d="M8 17h4" />
+        </svg>
+      );
+    default:
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="8" y1="13" x2="16" y2="13" />
+        </svg>
+      );
+  }
+}
 
 export default function ChatInput({
   onSend,
@@ -43,8 +117,10 @@ export default function ChatInput({
   const value = isControlled ? controlledValue : internalValue;
 
   const [attachedImages, setAttachedImages] = useState<string[]>([]);
+  const [attachedDocs, setAttachedDocs] = useState<AttachedDoc[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState<string>("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -71,39 +147,107 @@ export default function ChatInput({
     adjustHeight();
   }, [value, adjustHeight]);
 
-  // Handle incoming image files from picker, paste, or drag & drop
-  const processImageFiles = useCallback(async (files: File[]) => {
-    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
+  // Handle incoming image files
+  const processImageFiles = useCallback(async (imageFiles: File[]) => {
     if (imageFiles.length === 0) return;
+
+    const remainingSlots = MAX_IMAGE_COUNT - attachedImages.length;
+    if (remainingSlots <= 0) return;
+
+    const toProcess = imageFiles.slice(0, remainingSlots);
+    const results = await Promise.all(
+      toProcess.map(async (file) => {
+        try {
+          return await optimizeImageFile(file);
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    const validUrls = results.filter((url): url is string => Boolean(url));
+    setAttachedImages((prev) => [...prev, ...validUrls].slice(0, MAX_IMAGE_COUNT));
+  }, [attachedImages.length]);
+
+  // Handle incoming document files (PDF, DOCX, XLSX, CSV, TXT)
+  const processDocFiles = useCallback(async (docFiles: File[]) => {
+    if (docFiles.length === 0) return;
+
+    const remainingSlots = MAX_DOC_COUNT - attachedDocs.length;
+    if (remainingSlots <= 0) {
+      alert("Maksimal 5 dokumen terlampir sekaligus.");
+      return;
+    }
+
+    const toProcess = docFiles.slice(0, remainingSlots);
+    for (const file of toProcess) {
+      setProcessingStatus(`Mengekstrak ${file.name}...`);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/extract-document", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          alert(data.error || `Gagal membaca dokumen ${file.name}`);
+          continue;
+        }
+
+        const newDoc: AttachedDoc = {
+          name: data.name,
+          size: data.size,
+          type: data.type,
+          pageCount: data.pageCount,
+          sheetCount: data.sheetCount,
+          extractedText: data.text,
+        };
+
+        setAttachedDocs((prev) => [...prev, newDoc]);
+      } catch (err: unknown) {
+        console.error("Document upload error:", err);
+        alert(`Gagal mengunggah file ${file.name}`);
+      }
+    }
+  }, [attachedDocs.length]);
+
+  // Unified file processor for image and document files
+  const handleIncomingFiles = useCallback(async (files: File[]) => {
+    if (files.length === 0) return;
+
+    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
+    const docFiles = files.filter((f) => {
+      const ext = f.name.split(".").pop()?.toLowerCase() || "";
+      return SUPPORTED_DOC_EXTS.includes(ext);
+    });
+
+    if (imageFiles.length === 0 && docFiles.length === 0) {
+      alert("Format file belum didukung. Silakan unggah gambar, PDF, Word (.docx), Excel (.xlsx/.xls), CSV, atau teks.");
+      return;
+    }
 
     setIsProcessing(true);
     try {
-      const remainingSlots = MAX_IMAGE_COUNT - attachedImages.length;
-      if (remainingSlots <= 0) return;
-
-      const toProcess = imageFiles.slice(0, remainingSlots);
-      const results = await Promise.all(
-        toProcess.map(async (file) => {
-          try {
-            return await optimizeImageFile(file);
-          } catch {
-            return null;
-          }
-        })
-      );
-
-      const validUrls = results.filter((url): url is string => Boolean(url));
-      setAttachedImages((prev) => [...prev, ...validUrls].slice(0, MAX_IMAGE_COUNT));
+      if (imageFiles.length > 0) {
+        await processImageFiles(imageFiles);
+      }
+      if (docFiles.length > 0) {
+        await processDocFiles(docFiles);
+      }
     } finally {
       setIsProcessing(false);
+      setProcessingStatus("");
     }
-  }, [attachedImages.length]);
+  }, [processImageFiles, processDocFiles]);
 
   // File input change
   const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      await processImageFiles(files);
+      await handleIncomingFiles(files);
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -115,12 +259,24 @@ export default function ChatInput({
     setAttachedImages((prev) => prev.filter((_, idx) => idx !== idxToRemove));
   };
 
-  // Clipboard paste detection (Ctrl+V / Cmd+V)
+  // Remove attached document
+  const removeAttachedDoc = (idxToRemove: number) => {
+    setAttachedDocs((prev) => prev.filter((_, idx) => idx !== idxToRemove));
+  };
+
+  // Clipboard paste detection (images or files)
   const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const clipboardFiles = Array.from(e.clipboardData.files || []);
+    if (clipboardFiles.length > 0) {
+      e.preventDefault();
+      await handleIncomingFiles(clipboardFiles);
+      return;
+    }
+
     const pastedImages = getImagesFromClipboard(e);
     if (pastedImages.length > 0) {
       e.preventDefault();
-      await processImageFiles(pastedImages);
+      await handleIncomingFiles(pastedImages);
     }
   };
 
@@ -138,9 +294,16 @@ export default function ChatInput({
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files || []);
+    if (droppedFiles.length > 0) {
+      await handleIncomingFiles(droppedFiles);
+      return;
+    }
+
     const droppedImages = getImagesFromDrop(e);
     if (droppedImages.length > 0) {
-      await processImageFiles(droppedImages);
+      await handleIncomingFiles(droppedImages);
     }
   };
 
@@ -150,16 +313,21 @@ export default function ChatInput({
       return;
     }
     const trimmed = value.trim();
-    if (!trimmed && attachedImages.length === 0) return;
+    if (!trimmed && attachedImages.length === 0 && attachedDocs.length === 0) return;
 
-    onSend(trimmed, attachedImages.length > 0 ? attachedImages : undefined);
+    onSend(
+      trimmed,
+      attachedImages.length > 0 ? attachedImages : undefined,
+      attachedDocs.length > 0 ? attachedDocs : undefined
+    );
     setValue("");
     setAttachedImages([]);
+    setAttachedDocs([]);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [value, attachedImages, isStreaming, onSend, onStop, setValue]);
+  }, [value, attachedImages, attachedDocs, isStreaming, onSend, onStop, setValue]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -171,7 +339,8 @@ export default function ChatInput({
     [handleSubmit]
   );
 
-  const canSubmit = Boolean(value.trim() || attachedImages.length > 0);
+  const canSubmit = Boolean(value.trim() || attachedImages.length > 0 || attachedDocs.length > 0);
+  const hasAttachments = attachedImages.length > 0 || attachedDocs.length > 0;
 
   return (
     <div
@@ -181,11 +350,11 @@ export default function ChatInput({
       onDrop={handleDrop}
     >
       <div className={`${styles.inputContainer} ${isDragging ? styles.inputContainerDragging : ""}`}>
-        {/* Hidden File Picker */}
+        {/* Hidden File Picker accepting images and documents */}
         <input
           type="file"
           ref={fileInputRef}
-          accept="image/*"
+          accept="image/*,.pdf,.docx,.xlsx,.xls,.csv,.txt,.md,.markdown,.json,.sql,.yaml,.yml"
           multiple
           style={{ display: "none" }}
           onChange={handleFileInputChange}
@@ -200,7 +369,7 @@ export default function ChatInput({
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <span>{t?.dropImagesHere || "Lepaskan gambar di sini..."}</span>
+            <span>{t?.dropFilesHere || "Lepaskan gambar atau dokumen di sini..."}</span>
           </div>
         )}
 
@@ -209,9 +378,9 @@ export default function ChatInput({
           type="button"
           className={styles.attachBtnLeft}
           onClick={() => fileInputRef.current?.click()}
-          disabled={disabled || attachedImages.length >= MAX_IMAGE_COUNT || isProcessing}
-          title={t?.uploadImage || "Unggah gambar (atau paste Ctrl+V)"}
-          aria-label={t?.uploadImage || "Unggah gambar"}
+          disabled={disabled || (attachedImages.length >= MAX_IMAGE_COUNT && attachedDocs.length >= MAX_DOC_COUNT) || isProcessing}
+          title={t?.uploadAttachment || "Unggah gambar atau dokumen (PDF, Word, Excel, CSV, TXT)"}
+          aria-label={t?.uploadAttachment || "Unggah file"}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -220,11 +389,36 @@ export default function ChatInput({
         </button>
 
         <div className={styles.inputInnerColumn}>
-          {/* Attached Image Thumbnails */}
-          {attachedImages.length > 0 && (
+          {/* Attached Attachments Preview Strip */}
+          {hasAttachments && (
             <div className={styles.previewStrip}>
+              {/* Document Badges */}
+              {attachedDocs.map((doc, idx) => (
+                <div key={`doc-${idx}`} className={`${styles.docPreviewCard} ${styles[`docType_${doc.type}`] || ""}`}>
+                  <div className={styles.docPreviewIcon}>{getDocIcon(doc.type)}</div>
+                  <div className={styles.docPreviewMeta}>
+                    <span className={styles.docPreviewName} title={doc.name}>{doc.name}</span>
+                    <span className={styles.docPreviewSub}>
+                      {formatFileSize(doc.size)}
+                      {doc.pageCount ? ` · ${doc.pageCount} ${t?.pages || "hal"}` : ""}
+                      {doc.sheetCount ? ` · ${doc.sheetCount} ${t?.sheets || "sheet"}` : ""}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.removeDocBtn}
+                    onClick={() => removeAttachedDoc(idx)}
+                    title={t?.removeAttachment || "Hapus dokumen"}
+                    aria-label={t?.removeAttachment || "Hapus dokumen"}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+
+              {/* Image Thumbnails */}
               {attachedImages.map((imgSrc, idx) => (
-                <div key={idx} className={styles.previewCard}>
+                <div key={`img-${idx}`} className={styles.previewCard}>
                   <img src={imgSrc} alt={`Lampiran ${idx + 1}`} className={styles.previewImage} />
                   <button
                     type="button"
@@ -237,9 +431,12 @@ export default function ChatInput({
                   </button>
                 </div>
               ))}
+
+              {/* Processing Spinner / Loading */}
               {isProcessing && (
-                <div className={styles.processingThumb}>
+                <div className={styles.processingThumb} title={processingStatus || "Memproses file..."}>
                   <div className={styles.miniSpinner} />
+                  {processingStatus && <span className={styles.processingText}>{processingStatus}</span>}
                 </div>
               )}
             </div>
@@ -297,7 +494,7 @@ export default function ChatInput({
 
       <div className={styles.footerRow}>
         <span className={styles.hint}>
-          <kbd>Enter</kbd> {t?.inputHintEnter || "untuk kirim"} · <kbd>Shift + Enter</kbd> {t?.inputHintShiftEnter || "untuk baris baru"} · <kbd>Ctrl + V</kbd> untuk tempel gambar
+          <kbd>Enter</kbd> {t?.inputHintEnter || "untuk kirim"} · <kbd>Shift + Enter</kbd> {t?.inputHintShiftEnter || "untuk baris baru"} · <kbd>+</kbd> lampirkan gambar & dokumen
         </span>
       </div>
     </div>

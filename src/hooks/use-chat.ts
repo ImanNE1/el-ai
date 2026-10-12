@@ -6,11 +6,21 @@
 
 import { useState, useCallback, useRef } from "react";
 
+export interface AttachedDoc {
+  name: string;
+  size: number;
+  type: string;
+  pageCount?: number;
+  sheetCount?: number;
+  extractedText?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   images?: string[];
+  documents?: AttachedDoc[];
   reasoning?: string;
   timestamp: number;
   model?: string;
@@ -97,11 +107,13 @@ export function useChat(options: UseChatOptions = {}) {
       content: string,
       modelOverride?: string,
       customPrompt?: string,
-      images?: string[]
+      images?: string[],
+      documents?: AttachedDoc[]
     ) => {
       const hasText = content.trim().length > 0;
       const hasImages = Array.isArray(images) && images.length > 0;
-      if ((!hasText && !hasImages) || isStreaming) return;
+      const hasDocs = Array.isArray(documents) && documents.length > 0;
+      if ((!hasText && !hasImages && !hasDocs) || isStreaming) return;
 
       setError(null);
 
@@ -112,6 +124,7 @@ export function useChat(options: UseChatOptions = {}) {
         role: "user",
         content: content.trim(),
         images: hasImages ? images : undefined,
+        documents: hasDocs ? documents : undefined,
         timestamp: Date.now(),
       };
 
@@ -133,16 +146,44 @@ export function useChat(options: UseChatOptions = {}) {
       abortRef.current = controller;
 
       try {
-        // Build message history for API, formatting multimodal messages appropriately
+        // Build message history for API, formatting multimodal messages and documents appropriately
         const apiMessages = [...messages, userMessage].map((m) => {
+          let textContent = m.content || "";
+
+          // If message has attached documents, prepend structured document context
+          if (m.role === "user" && m.documents && m.documents.length > 0) {
+            const docBlocks = m.documents
+              .map((d) => {
+                const metaParts = [
+                  d.type.toUpperCase(),
+                  d.pageCount ? `${d.pageCount} Halaman` : null,
+                  d.sheetCount ? `${d.sheetCount} Sheet` : null,
+                ]
+                  .filter(Boolean)
+                  .join(", ");
+
+                return `---
+[DOKUMEN TERLAMPIR: ${d.name} (${metaParts})]
+${d.extractedText || "(Teks dokumen kosong atau tidak terbaca)"}
+---`;
+              })
+              .join("\n\n");
+
+            if (textContent.trim()) {
+              textContent = `${docBlocks}\n\n${textContent}`;
+            } else {
+              textContent = `${docBlocks}\n\nTolong analisis dokumen di atas, berikan ringkasan komprehensif, poin-poin penting, serta temuan utama dari dokumen tersebut.`;
+            }
+          }
+
           if (m.role === "user" && m.images && m.images.length > 0) {
             const parts: Array<
               | { type: "text"; text: string }
               | { type: "image_url"; image_url: { url: string } }
             > = [];
 
-            if (m.content) {
-              parts.push({ type: "text", text: m.content });
+            if (textContent) {
+              parts.push({ type: "text", text: textContent });
             } else {
               parts.push({ type: "text", text: "Jelaskan gambar ini dan berikan informasi detail konteksnya." });
             }
@@ -162,7 +203,7 @@ export function useChat(options: UseChatOptions = {}) {
 
           return {
             role: m.role,
-            content: m.content,
+            content: textContent,
           };
         });
 
@@ -310,7 +351,7 @@ export function useChat(options: UseChatOptions = {}) {
         return prev;
       });
 
-      sendMessage(lastUserMsg.content, modelOverride, undefined, lastUserMsg.images);
+      sendMessage(lastUserMsg.content, modelOverride, undefined, lastUserMsg.images, lastUserMsg.documents);
     },
     [messages, isStreaming, sendMessage]
   );

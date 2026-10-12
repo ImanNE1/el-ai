@@ -19,6 +19,64 @@ interface ChatMessageProps {
   t?: TranslationDictionary["chat"];
 }
 
+function formatFileSize(bytes: number): string {
+  if (!bytes || bytes <= 0) return "0 B";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function renderDocIcon(type: string) {
+  switch (type.toLowerCase()) {
+    case "pdf":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="9" y1="13" x2="15" y2="13" />
+          <line x1="9" y1="17" x2="13" y2="17" />
+        </svg>
+      );
+    case "docx":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="8" y1="13" x2="16" y2="13" />
+          <line x1="8" y1="17" x2="16" y2="17" />
+        </svg>
+      );
+    case "xlsx":
+    case "xls":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="3" y1="15" x2="21" y2="15" />
+          <line x1="9" y1="3" x2="9" y2="21" />
+          <line x1="15" y1="3" x2="15" y2="21" />
+        </svg>
+      );
+    case "csv":
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <path d="M8 13h2" />
+          <path d="M8 17h4" />
+        </svg>
+      );
+    default:
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="8" y1="13" x2="16" y2="13" />
+        </svg>
+      );
+  }
+}
+
 function ChatMessage({
   message,
   isStreaming,
@@ -77,6 +135,33 @@ function ChatMessage({
         <div className={styles.content}>
           {isUser ? (
             <>
+              {/* Document Attachments */}
+              {message.documents && message.documents.length > 0 && (
+                <div className={styles.messageDocsList}>
+                  {message.documents.map((doc, docIdx) => (
+                    <div
+                      key={docIdx}
+                      className={`${styles.messageDocChip} ${styles[`docType_${doc.type}`] || ""}`}
+                    >
+                      <div className={styles.messageDocIcon}>
+                        {renderDocIcon(doc.type)}
+                      </div>
+                      <div className={styles.messageDocDetails}>
+                        <span className={styles.messageDocName} title={doc.name}>
+                          {doc.name}
+                        </span>
+                        <span className={styles.messageDocMeta}>
+                          {formatFileSize(doc.size)}
+                          {doc.pageCount ? ` · ${doc.pageCount} ${t?.pages || "hal"}` : ""}
+                          {doc.sheetCount ? ` · ${doc.sheetCount} ${t?.sheets || "sheet"}` : ""}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Image Attachments */}
               {message.images && message.images.length > 0 && (
                 <div className={styles.messageImagesGrid}>
                   {message.images.map((imgSrc, imgIdx) => (

@@ -84,6 +84,12 @@ export interface TranslationDictionary {
     dropImagesHere: string;
     removeImage: string;
     imageZoomHint: string;
+    uploadAttachment: string;
+    dropFilesHere: string;
+    removeAttachment: string;
+    extractingDocument: string;
+    pages: string;
+    sheets: string;
   };
   modelSelector: {
     selectModel: string;
@@ -227,6 +233,12 @@ export const translations: Record<Language, TranslationDictionary> = {
       dropImagesHere: "Lepaskan gambar di sini...",
       removeImage: "Hapus gambar",
       imageZoomHint: "Klik untuk memperbesar gambar",
+      uploadAttachment: "Unggah gambar atau dokumen (PDF, Word, Excel, CSV, TXT)",
+      dropFilesHere: "Lepaskan file atau gambar di sini...",
+      removeAttachment: "Hapus lampiran",
+      extractingDocument: "Mengekstrak dokumen...",
+      pages: "halaman",
+      sheets: "sheet",
     },
     modelSelector: {
       selectModel: "Pilih Model",
@@ -400,6 +412,12 @@ export const translations: Record<Language, TranslationDictionary> = {
       dropImagesHere: "Drop images here...",
       removeImage: "Remove image",
       imageZoomHint: "Click to zoom image",
+      uploadAttachment: "Upload image or document (PDF, Word, Excel, CSV, TXT)",
+      dropFilesHere: "Drop files or images here...",
+      removeAttachment: "Remove attachment",
+      extractingDocument: "Extracting document...",
+      pages: "pages",
+      sheets: "sheets",
     },
     modelSelector: {
       selectModel: "Select Model",

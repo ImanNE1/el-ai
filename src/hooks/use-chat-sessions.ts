@@ -166,7 +166,13 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-high
         if ((title === "New Conversation" || !title) && newMessages.length > 0) {
           const firstUserMsg = newMessages.find((m) => m.role === "user");
           if (firstUserMsg) {
-            title = generateTitleFromMessage(firstUserMsg.content);
+            if (firstUserMsg.content && firstUserMsg.content.trim()) {
+              title = generateTitleFromMessage(firstUserMsg.content);
+            } else if (firstUserMsg.documents && firstUserMsg.documents.length > 0) {
+              title = `Analisis: ${firstUserMsg.documents[0].name}`;
+            } else if (firstUserMsg.images && firstUserMsg.images.length > 0) {
+              title = "Analisis Gambar";
+            }
           }
         }
 

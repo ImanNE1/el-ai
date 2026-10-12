@@ -13,7 +13,7 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from "react";
-import { useChat } from "@/hooks/use-chat";
+import { useChat, type AttachedDoc } from "@/hooks/use-chat";
 import { useChatSessions } from "@/hooks/use-chat-sessions";
 import { useSettings } from "@/hooks/use-settings";
 import ChatMessage from "@/components/chat-message";
@@ -168,7 +168,7 @@ export default function ChatPage() {
 
   // Handle send message with Gem Skill requirement validation
   const handleSend = useCallback(
-    (text: string, images?: string[]) => {
+    (text: string, images?: string[], documents?: AttachedDoc[]) => {
       // If fresh/empty chat and no Gem has been picked yet, require user to choose one
       if (!hasMessages && !selectedGemId) {
         setGemWarning(true);
@@ -185,7 +185,7 @@ export default function ChatPage() {
       if (actualGemId !== activeGem?.id) {
         setActiveGemId(actualGemId);
       }
-      sendMessage(text, selectedModel, getComputedSystemPrompt(), images);
+      sendMessage(text, selectedModel, getComputedSystemPrompt(), images, documents);
     },
     [hasMessages, selectedGemId, activeGem, setActiveGemId, sendMessage, selectedModel, getComputedSystemPrompt]
   );
