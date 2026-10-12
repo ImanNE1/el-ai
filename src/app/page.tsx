@@ -202,11 +202,11 @@ export default function ChatPage() {
             </button>
 
             <div className={styles.logo}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
+              <img
+                src="/logo-icon.png"
+                alt="EL.AI"
+                className={styles.logoImg}
+              />
             </div>
 
             <div>
@@ -337,11 +337,11 @@ export default function ChatPage() {
         ) : (
           <div className={styles.welcome}>
             <div className={styles.welcomeIcon}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
+              <img
+                src="/logo-icon.png"
+                alt="EL.AI"
+                className={styles.welcomeLogoImg}
+              />
             </div>
             <h2 className={styles.welcomeTitle}>
               {activeGem ? t.welcome.readyWithGem.replace("{gem}", activeGem.name) : t.welcome.title}

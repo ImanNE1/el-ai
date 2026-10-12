@@ -80,12 +80,21 @@
   width: 36px;
   height: 36px;
   border-radius: 11px;
-  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  background: #0b0f19;
+  border: 1px solid rgba(56, 189, 248, 0.28);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.25);
+  flex-shrink: 0;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .headerTitle {
@@ -247,16 +256,24 @@
 }
 
 .welcomeIcon {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  background: #0b0f19;
+  border: 1px solid rgba(56, 189, 248, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+  overflow: hidden;
+  box-shadow: 0 10px 36px rgba(6, 182, 212, 0.3);
   animation: floatIcon 3.5s ease-in-out infinite;
+}
+
+.welcomeLogoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 @keyframes floatIcon {
@@ -397,11 +414,6 @@
     width: 28px;
     height: 28px;
     border-radius: 8px;
-  }
-
-  .logo svg {
-    width: 16px;
-    height: 16px;
   }
 
   .sidebarToggle {

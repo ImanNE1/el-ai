@@ -90,11 +90,11 @@ function ChatSidebar({
           <div className={styles.headerTop}>
             <div className={styles.sidebarBrand}>
               <div className={styles.brandIcon}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
+                <img
+                  src="/logo-icon.png"
+                  alt="EL.AI"
+                  className={styles.brandLogoImg}
+                />
               </div>
               <span>{t?.title || "Percakapan"}</span>
             </div>

@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   description:
     "A modern AI chatbot powered by advanced language models. Get instant help with coding, writing, brainstorming, and more.",
   robots: "noindex, nofollow",
+  icons: {
+    icon: "/logo-icon.png",
+    apple: "/logo-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
