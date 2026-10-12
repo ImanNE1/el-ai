@@ -49,11 +49,11 @@ export default function ModelSelector({ selectedModel, onModelChange, t }: Model
       } catch {
         // Fallback models if API fails
         setModels([
+          { id: "ag/gemini-3.8-flash-high", name: "Gemini 3.8 Flash (High - Default)", provider: "ag", vision: true, reasoning: true, contextWindow: 1048576, status: "verified", isRecommended: true },
           { id: "ag/gemini-3.8-flash-medium", name: "Gemini 3.8 Flash (Medium)", provider: "ag", vision: true, reasoning: true, contextWindow: 1048576, status: "verified", isRecommended: true },
-          { id: "ag/gemini-3.8-flash-high", name: "Gemini 3.8 Flash (High)", provider: "ag", vision: true, reasoning: true, contextWindow: 1048576, status: "verified", isRecommended: true },
           { id: "ag/claude-sonnet-4-6", name: "Claude Sonnet 4.6 (Thinking)", provider: "ag", vision: true, reasoning: true, contextWindow: 200000, status: "verified", isRecommended: true },
           { id: "ag/claude-opus-4-6-thinking", name: "Claude Opus 4.6 (Thinking)", provider: "ag", vision: true, reasoning: true, contextWindow: 200000, status: "verified", isRecommended: true },
-          { id: "gh/gpt-4o-mini", name: "GPT-4o Mini (Default)", provider: "gh", vision: true, reasoning: false, contextWindow: 128000, status: "verified", isRecommended: true },
+          { id: "gh/gpt-4o-mini", name: "GPT-4o Mini", provider: "gh", vision: true, reasoning: false, contextWindow: 128000, status: "verified", isRecommended: true },
           { id: "gh/gpt-4o", name: "GPT-4o Omnimodal", provider: "gh", vision: true, reasoning: false, contextWindow: 128000, status: "verified", isRecommended: true },
           { id: "cx/gpt-5.5", name: "GPT-5.5 Flagship", provider: "cx", vision: true, reasoning: true, contextWindow: 1050000, status: "verified", isRecommended: true },
           { id: "gcli/grok-4.7", name: "Grok 4.7 Reasoning", provider: "gcli", vision: true, reasoning: true, contextWindow: 256000, status: "verified", isRecommended: true },

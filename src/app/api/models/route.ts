@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // Comprehensive map of verified models with their exact UI display names from the gateway
 const VERIFIED_MODEL_NAMES: Record<string, string> = {
   // Antigravity Verified Models
-  "ag/gemini-3.8-flash-high": "Gemini 3.8 Flash (High)",
+  "ag/gemini-3.8-flash-high": "Gemini 3.8 Flash (High - Default)",
   "ag/gemini-3.8-flash-medium": "Gemini 3.8 Flash (Medium)",
   "ag/gemini-3.8-flash-low": "Gemini 3.8 Flash (Low)",
   "ag/gemini-3.8-flash": "Gemini 3.8 Flash",
@@ -29,7 +29,7 @@ const VERIFIED_MODEL_NAMES: Record<string, string> = {
   "ag/gpt-oss-120b-medium": "GPT-OSS 120B (Medium)",
 
   // Additional Tested & Working Gateway Models
-  "gh/gpt-4o-mini": "GPT-4o Mini (Default)",
+  "gh/gpt-4o-mini": "GPT-4o Mini",
   "gh/gpt-4o": "GPT-4o Omnimodal",
   "gh/gpt-4.1": "GPT-4.1 (1M Context)",
   "gh/gpt-3.5-turbo": "GPT-3.5 Turbo",

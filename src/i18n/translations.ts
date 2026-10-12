@@ -47,6 +47,23 @@ export interface TranslationDictionary {
     title: string;
     subtitle: string;
     readyWithGem: string;
+    chooseGemTitle: string;
+    chooseGemSubtitle: string;
+    chooseGemRequiredBadge: string;
+    gemSelectedBadge: string;
+    generalName: string;
+    generalDesc: string;
+    warningChooseGem: string;
+    starterPromptsTitle: string;
+    inputPlaceholderWithGem: string;
+  };
+  gemStarters: {
+    psychologist: string[];
+    codeArchitect: string[];
+    writingEditor: string[];
+    learningCoach: string[];
+    creativeBrainstormer: string[];
+    general: string[];
   };
   chat: {
     userRole: string;
@@ -128,6 +145,10 @@ export interface TranslationDictionary {
       name: string;
       description: string;
     };
+    psychologistCounselor: {
+      name: string;
+      description: string;
+    };
   };
 }
 
@@ -173,6 +194,15 @@ export const translations: Record<Language, TranslationDictionary> = {
       title: "Ada yang bisa saya bantu hari ini?",
       subtitle: "Tanyakan apa saja, rancang arsitektur kode, atau diskusikan ide dengan model terverifikasi berkecepatan tinggi.",
       readyWithGem: "Siap membantu dengan {gem}",
+      chooseGemTitle: "Pilih Gem Skill untuk Memulai Percakapan",
+      chooseGemSubtitle: "Pilih peran atau keahlian asisten sebelum mengirim pesan pertama Anda:",
+      chooseGemRequiredBadge: "Wajib dipilih",
+      gemSelectedBadge: "Terpilih",
+      generalName: "Asisten Umum (General)",
+      generalDesc: "Asisten serba guna yang cerdas, fleksibel, dan bijak untuk berbagai topik tanpa batasan peran khusus.",
+      warningChooseGem: "Silakan pilih salah satu Gem Skill di bawah ini terlebih dahulu sebelum memulai obrolan.",
+      starterPromptsTitle: "Topik pemantik diskusi:",
+      inputPlaceholderWithGem: "Kirim pesan ke {gem}...",
     },
     chat: {
       userRole: "Anda",
@@ -254,6 +284,42 @@ export const translations: Record<Language, TranslationDictionary> = {
         name: "Creative Brainstormer",
         description: "Strategis kreatif yang menghasilkan konsep inovatif dan sudut pandang pemecahan masalah baru.",
       },
+      psychologistCounselor: {
+        name: "Psikolog Berpengalaman",
+        description: "Psikolog klinis & konselor empatik yang menyediakan ruang aman, bimbingan berbasis bukti (CBT & Mindfulness), dan membantu mengurai kecemasan serta beban emosional.",
+      },
+    },
+    gemStarters: {
+      psychologist: [
+        "Saya sering merasa cemas dan overthinking belakangan ini...",
+        "Bantu saya mengurai stres pekerjaan dan rasa burnout...",
+        "Bagaimana langkah awal melatih self-compassion saat merasa gagal?",
+      ],
+      codeArchitect: [
+        "Rancang arsitektur clean code & modular untuk aplikasi Next.js...",
+        "Review pola penanganan error & state management pada kode ini...",
+        "Best practice merancang REST API yang aman, efisien, dan type-safe...",
+      ],
+      writingEditor: [
+        "Poles draf tulisan ini agar lebih tajam, ringkas, dan persuasif...",
+        "Perbaiki tata bahasa, ejaan, dan gaya penulisan naskah berikut...",
+        "Buat ringkasan eksekutif profesional dari poin-poin catatan ini...",
+      ],
+      learningCoach: [
+        "Jelaskan konsep Quantum Computing dengan analogi sederhana...",
+        "Bagaimana cara kerja arsitektur Transformer dan Attention di LLM?",
+        "Beri saya roadmap belajar terstruktur untuk menguasai AI...",
+      ],
+      creativeBrainstormer: [
+        "Beri saya 5 ide produk digital inovatif yang memecahkan masalah nyata...",
+        "Brainstorm strategi peluncuran produk kreatif tanpa anggaran besar...",
+        "Bantu eksplorasi sudut pandang unik dan tak terduga untuk ide ini...",
+      ],
+      general: [
+        "Bantu saya menganalisis dan memecahkan permasalahan ini...",
+        "Tuliskan rencana aksi praktis dan terstruktur untuk tujuan ini...",
+        "Jelaskan ringkasan mendalam tentang topik ini...",
+      ],
     },
   },
   en: {
@@ -297,6 +363,15 @@ export const translations: Record<Language, TranslationDictionary> = {
       title: "How can I help you today?",
       subtitle: "Ask anything, request code architecture, or brainstorm ideas with verified high-performance models.",
       readyWithGem: "Ready with {gem}",
+      chooseGemTitle: "Choose a Gem Skill to Start Conversation",
+      chooseGemSubtitle: "Select the assistant's specialty or role before sending your first message:",
+      chooseGemRequiredBadge: "Selection required",
+      gemSelectedBadge: "Selected",
+      generalName: "General Assistant",
+      generalDesc: "Versatile, smart assistant for general tasks and flexible problem-solving without role constraints.",
+      warningChooseGem: "Please select one of the Gem Skills below before starting the chat.",
+      starterPromptsTitle: "Conversation starter ideas:",
+      inputPlaceholderWithGem: "Message {gem}...",
     },
     chat: {
       userRole: "You",
@@ -378,6 +453,42 @@ export const translations: Record<Language, TranslationDictionary> = {
         name: "Creative Brainstormer",
         description: "Generates novel concepts, lateral connections, and innovative problem-solving angles.",
       },
+      psychologistCounselor: {
+        name: "Experienced Psychologist",
+        description: "Clinical psychologist & counselor providing compassionate listening, emotional regulation, and evidence-based guidance (CBT & Mindfulness) in a safe space.",
+      },
+    },
+    gemStarters: {
+      psychologist: [
+        "I've been feeling anxious and overthinking lately, how can I find calm?",
+        "Help me navigate workplace stress and emotional exhaustion...",
+        "What are practical steps to practice self-compassion after setbacks?",
+      ],
+      codeArchitect: [
+        "Design a clean, modular application architecture for Next.js...",
+        "Review error handling patterns and state management in this code...",
+        "Best practices for building secure, efficient, and type-safe REST APIs...",
+      ],
+      writingEditor: [
+        "Polish this draft to make it compelling, sharp, and concise...",
+        "Proofread and enhance the clarity and tone of this text...",
+        "Create a professional executive summary from these key notes...",
+      ],
+      learningCoach: [
+        "Explain Quantum Computing using simple, intuitive analogies...",
+        "How do Large Language Models (LLMs) and Attention work under the hood?",
+        "Provide a structured learning roadmap for mastering Modern AI...",
+      ],
+      creativeBrainstormer: [
+        "Brainstorm 5 novel digital product ideas addressing real problems...",
+        "Develop an unconventional zero-budget product launch strategy...",
+        "Help me explore fresh, unexpected creative angles on this topic...",
+      ],
+      general: [
+        "Help me analyze and solve this problem step by step...",
+        "Draft a structured, practical action plan for this goal...",
+        "Provide a thorough explanation and summary of this topic...",
+      ],
     },
   },
 };

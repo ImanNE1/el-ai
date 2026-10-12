@@ -12,6 +12,7 @@ export interface ChatSession {
   title: string;
   messages: ChatMessage[];
   model: string;
+  gemId?: string | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -29,7 +30,7 @@ function generateTitleFromMessage(content: string): string {
   return firstLine.length > 36 ? `${firstLine.slice(0, 36)}...` : firstLine;
 }
 
-export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-medium") {
+export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-high") {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string>("");
   const [isLoaded, setIsLoaded] = useState(false);
@@ -86,13 +87,14 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-medi
   const activeSession = sessions.find((s) => s.id === activeSessionId) || sessions[0];
 
   // Create new session
-  const createNewSession = useCallback((model: string = defaultModel) => {
+  const createNewSession = useCallback((model: string = defaultModel, gemId: string | null = null) => {
     const newId = generateSessionId();
     const newSession: ChatSession = {
       id: newId,
       title: "New Conversation",
       messages: [],
       model,
+      gemId,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -154,7 +156,7 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-medi
   }, []);
 
   // Update messages of active session (called when messages stream or change)
-  const saveSessionMessages = useCallback((sessionId: string, newMessages: ChatMessage[], currentModel?: string) => {
+  const saveSessionMessages = useCallback((sessionId: string, newMessages: ChatMessage[], currentModel?: string, gemId?: string | null) => {
     setSessions((prev) => {
       return prev.map((s) => {
         if (s.id !== sessionId) return s;
@@ -173,6 +175,7 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-medi
           title,
           messages: newMessages,
           model: currentModel || s.model,
+          gemId: gemId !== undefined ? gemId : s.gemId,
           updatedAt: Date.now(),
         };
       });

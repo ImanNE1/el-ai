@@ -243,29 +243,49 @@
   overscroll-behavior-y: contain;
 }
 
-/* ── Minimal Clean Welcome Screen ──────────────────────────── */
-.welcome {
+/* ── Gem Selection Welcome Area ────────────────────────────── */
+.welcomeScrollArea {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.welcome {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin: auto 0;
+  padding: 16px 0;
+}
+
+.welcomeHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .welcomeIcon {
-  width: 76px;
-  height: 76px;
-  border-radius: 22px;
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
   background: #0b0f19;
   border: 1px solid rgba(56, 189, 248, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 0 10px 36px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.28);
   animation: floatIcon 3.5s ease-in-out infinite;
 }
 
@@ -281,14 +301,68 @@
   50% { transform: translateY(-7px); }
 }
 
+.welcomeBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gemRequiredBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  color: #fb7185;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  animation: pulseBadge 2.2s infinite ease-in-out;
+}
+
+[data-theme="light"] .gemRequiredBadge {
+  background: rgba(225, 29, 72, 0.1);
+  border-color: rgba(225, 29, 72, 0.3);
+  color: #e11d48;
+}
+
+.gemSelectedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="light"] .gemSelectedBadge {
+  background: rgba(5, 150, 105, 0.12);
+  border-color: rgba(5, 150, 105, 0.35);
+  color: #059669;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.03); }
+}
+
 .welcomeTitle {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
   background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 [data-theme="light"] .welcomeTitle {
@@ -299,10 +373,311 @@
 }
 
 .welcomeSubtitle {
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--text-muted);
-  max-width: 440px;
+  max-width: 520px;
   line-height: 1.5;
+}
+
+/* ── Warning Banner ────────────────────────────────────────── */
+.gemWarningBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 650px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.45);
+  color: #fda4af;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 18px rgba(244, 63, 94, 0.2);
+  animation: bannerShake 0.45s ease-in-out;
+}
+
+[data-theme="light"] .gemWarningBanner {
+  background: rgba(225, 29, 72, 0.1);
+  border-color: rgba(225, 29, 72, 0.4);
+  color: #be123c;
+}
+
+.gemWarningIcon {
+  color: #fb7185;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .gemWarningIcon {
+  color: #e11d48;
+}
+
+@keyframes bannerShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* ── Gem Selection Grid ────────────────────────────────────── */
+.gemGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+.gemGridShake {
+  animation: gridPulse 0.4s ease-in-out;
+}
+
+@keyframes gridPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.012); }
+}
+
+.gemCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.gemCard:hover {
+  transform: translateY(-3px);
+  border-color: var(--gem-border, rgba(99, 102, 241, 0.4));
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), 0 0 20px var(--gem-border, rgba(99, 102, 241, 0.15));
+}
+
+[data-theme="light"] .gemCard:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08), 0 0 16px var(--gem-border, rgba(99, 102, 241, 0.1));
+}
+
+.gemCardSelected {
+  border-color: var(--gem-color, var(--accent-primary)) !important;
+  background: var(--gem-gradient, rgba(99, 102, 241, 0.08)) !important;
+  box-shadow: 0 0 0 2px var(--gem-color, var(--accent-primary)), 0 10px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+[data-theme="light"] .gemCardSelected {
+  box-shadow: 0 0 0 2px var(--gem-color, var(--accent-primary)), 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.gemCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.gemCardIconWrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: rgba(125, 125, 125, 0.08);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.gemCard:hover .gemCardIconWrapper {
+  transform: scale(1.08);
+}
+
+.gemCardRadio {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gemCardUncheckedCircle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.gemCard:hover .gemCardUncheckedCircle {
+  border-color: var(--gem-color, var(--accent-primary));
+}
+
+.gemCardCheckIcon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gem-color, var(--accent-primary));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.gemCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.gemCardTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gemCardTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.gemActivePill {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--gem-color, var(--accent-primary));
+  color: #fff;
+  letter-spacing: 0.03em;
+}
+
+.gemCardDescription {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Starter Prompts Section ───────────────────────────────── */
+.starterSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.3s ease-out;
+  padding-top: 4px;
+}
+
+.starterHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.starterTitleIcon {
+  font-size: 14px;
+}
+
+.starterGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.starterChip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(10px);
+}
+
+.starterChip:hover {
+  background: var(--border-hover);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.starterChipText {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.starterChipArrow {
+  font-size: 14px;
+  color: var(--accent-primary);
+  opacity: 0.7;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.starterChip:hover .starterChipArrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+/* ── Responsive adjustments for Gem Selector ───────────────── */
+@media (max-width: 900px) {
+  .gemGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .starterGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .gemGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .welcomeTitle {
+    font-size: 19px;
+  }
+  .welcomeSubtitle {
+    font-size: 12.5px;
+  }
+  .welcomeScrollArea {
+    padding: 16px 12px;
+  }
+  .gemCard {
+    padding: 13px;
+  }
 }
 
 /* ── Error Toast ───────────────────────────────────────────── */

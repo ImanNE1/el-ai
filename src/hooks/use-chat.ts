@@ -97,7 +97,7 @@ export function useChat(options: UseChatOptions = {}) {
 
       setError(null);
 
-      const selectedModel = modelOverride || options.model || "ag/gemini-3.8-flash-medium";
+      const selectedModel = modelOverride || options.model || "ag/gemini-3.8-flash-high";
 
       const userMessage: ChatMessage = {
         id: generateId(),

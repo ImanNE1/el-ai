@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: body.model || "gh/gpt-4o-mini",
+        model: body.model || "ag/gemini-3.8-flash-high",
         messages,
         stream: true,
         temperature,

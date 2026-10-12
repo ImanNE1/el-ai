@@ -14,11 +14,12 @@ interface ChatInputProps {
   isStreaming: boolean;
   disabled?: boolean;
   t?: TranslationDictionary["chat"];
+  placeholder?: string;
 }
 
 const MAX_CHAR_LIMIT = 4000;
 
-export default function ChatInput({ onSend, onStop, isStreaming, disabled, t }: ChatInputProps) {
+export default function ChatInput({ onSend, onStop, isStreaming, disabled, t, placeholder }: ChatInputProps) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -68,11 +69,11 @@ export default function ChatInput({ onSend, onStop, isStreaming, disabled, t }: 
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
+          placeholder={placeholder || t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
           rows={1}
           maxLength={MAX_CHAR_LIMIT}
           disabled={disabled}
-          aria-label={t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
+          aria-label={placeholder || t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
         />
 
         <div className={styles.controls}>
