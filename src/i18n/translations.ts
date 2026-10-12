@@ -90,6 +90,10 @@ export interface TranslationDictionary {
     extractingDocument: string;
     pages: string;
     sheets: string;
+    downloadDocx: string;
+    docxDownloading: string;
+    documentReadyDocx: string;
+    downloadDocxSubtitle: string;
   };
   modelSelector: {
     selectModel: string;
@@ -239,6 +243,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       extractingDocument: "Mengekstrak dokumen...",
       pages: "halaman",
       sheets: "sheet",
+      downloadDocx: "Unduh .docx",
+      docxDownloading: "Menyiapkan .docx...",
+      documentReadyDocx: "Dokumen Word (.docx) Siap Diunduh",
+      downloadDocxSubtitle: "Diformat rapi dengan judul, tabel & daftar",
     },
     modelSelector: {
       selectModel: "Pilih Model",
@@ -418,6 +426,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       extractingDocument: "Extracting document...",
       pages: "pages",
       sheets: "sheets",
+      downloadDocx: "Download .docx",
+      docxDownloading: "Preparing .docx...",
+      documentReadyDocx: "Word Document (.docx) Ready",
+      downloadDocxSubtitle: "Formatted with headings, tables & lists",
     },
     modelSelector: {
       selectModel: "Select Model",

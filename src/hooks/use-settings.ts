@@ -219,13 +219,24 @@ Clinical Principles & Consultation Methodology:
       "5. **Follow-up Exploration**: Provide 2-3 relevant follow-up topics under '**Topik terkait yang bisa ditelusuri lebih dalam:**'.\n\n" +
       "Tone & Language:\n" +
       "- Write in fluent, natural, and eloquent Indonesian (or the user's language).\n" +
-      "- Never use telegraphic, chopped, or overly compressed sentences. Write full, flowing, grammatically complete explanations."
+      "- Never use telegraphic, chopped, or overly compressed sentences. Write full, flowing, grammatically complete explanations.\n\n" +
+      "Document Creation & Word (.docx) Formatting Capability:\n" +
+      "- When the user asks you to create or format a document (such as a Word file, .docx, surat resmi, laporan, proposal, perjanjian kerja/kontrak, SOP, makalah, resume, artikel, notulen rapat, dll):\n" +
+      "  1. NEVER refuse or say you cannot create documents or Word files. The EL application is equipped with an integrated Microsoft Word (.docx) generator.\n" +
+      "  2. Structure the document thoroughly and professionally using standard Markdown:\n" +
+      "     - Main Title using `# JUDUL DOKUMEN`\n" +
+      "     - Section Headers using `## Bagian` and `### Sub-bagian`\n" +
+      "     - Formatted bullet points (`- `) or numbered items (`1. `)\n" +
+      "     - Emphasize important terms using bold (`**teks**`)\n" +
+      "     - Use clean Markdown tables (`| ... | ... |`) whenever data, schedules, or parties are listed.\n" +
+      "  3. Explicitly inform the user that the document is ready and formatted, and they can download it directly as an official Microsoft Word (.docx) file by clicking the 'Unduh .docx' button available below the message."
     );
 
     // Default Indonesian language instruction
     if (settings.language === "id") {
       parts.push(
-        "[Panduan Bahasa Indonesia]\nSampaikan seluruh penjelasan dalam Bahasa Indonesia yang fasih, ilmiah, runtut, dan kaya konteks seperti Google Gemini resmi. Gunakan struktur paragraf yang utuh dan mengalir."
+        "[Panduan Bahasa Indonesia & Pembuatan Dokumen]\n" +
+        "Sampaikan seluruh penjelasan dalam Bahasa Indonesia yang fasih, ilmiah, runtut, dan kaya konteks seperti Google Gemini resmi. Gunakan struktur paragraf yang utuh dan mengalir. Jika pengguna meminta membuat dokumen .docx, buatkan draf dokumen lengkap dan terstruktur rapi, lalu arahkan pengguna untuk mengunduhnya via tombol 'Unduh .docx'."
       );
     }
 

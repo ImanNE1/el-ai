@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
             innerText.includes("credits") ||
             innerText.includes("limit")
           ) {
-            cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai. Silakan coba beberapa saat lagi atau beralih ke model lain.";
+            cleanError = "Batas penggunaan (limit/kuota) untuk model ini telah tercapai. Silakan coba beberapa saat lagi atau beralih ke model lain. :)";
           } else {
             cleanError = `Batas penggunaan (limit) tercapai: ${innerText.replace(/\[\d+\]:\s*/, "")}`;
           }

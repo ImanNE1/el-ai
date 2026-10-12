@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import type { ChatMessage as ChatMessageType } from "@/hooks/use-chat";
 import type { TranslationDictionary } from "@/i18n/translations";
 import Markdown from "./markdown";
+import { downloadDocx, isDocumentLike, extractDocumentTitle } from "@/lib/docx-generator";
 import styles from "./chat-message.module.css";
 
 interface ChatMessageProps {
@@ -88,6 +89,8 @@ function ChatMessage({
   const [showReasoning, setShowReasoning] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const [isDownloadingDocx, setIsDownloadingDocx] = useState(false);
+
   const handleCopyMessage = async () => {
     try {
       await navigator.clipboard.writeText(message.content);
@@ -95,6 +98,20 @@ function ChatMessage({
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Fallback
+    }
+  };
+
+  const handleDownloadDocx = async () => {
+    if (isDownloadingDocx || !message.content) return;
+    setIsDownloadingDocx(true);
+    try {
+      const docTitle = extractDocumentTitle(message.content);
+      await downloadDocx(message.content, `${docTitle}.docx`);
+    } catch (err) {
+      console.error("Failed to generate docx:", err);
+      alert("Terjadi kesalahan saat memformat dokumen Word. Silakan coba kembali.");
+    } finally {
+      setIsDownloadingDocx(false);
     }
   };
 
@@ -225,7 +242,53 @@ function ChatMessage({
               )}
 
               {message.content ? (
-                <Markdown content={message.content} />
+                <>
+                  <Markdown content={message.content} />
+                  {!isStreaming && isDocumentLike(message.content) && (
+                    <div className={styles.docExportCard}>
+                      <div className={styles.docExportLeft}>
+                        <div className={styles.docExportIcon}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="8" y1="13" x2="16" y2="13" />
+                            <line x1="8" y1="17" x2="16" y2="17" />
+                          </svg>
+                        </div>
+                        <div className={styles.docExportInfo}>
+                          <span className={styles.docExportTitle}>
+                            {extractDocumentTitle(message.content)}
+                          </span>
+                          <span className={styles.docExportSubtitle}>
+                            {t?.downloadDocxSubtitle || "Diformat rapi dengan judul, tabel & daftar"}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className={styles.docExportBtn}
+                        onClick={handleDownloadDocx}
+                        disabled={isDownloadingDocx}
+                      >
+                        {isDownloadingDocx ? (
+                          <>
+                            <div className={styles.docMiniSpinner} />
+                            <span>{t?.docxDownloading || "Menyiapkan..."}</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            <span>{t?.downloadDocx || "Unduh .docx"}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : isStreaming ? (
                 <div className={styles.typingIndicator}>
                   <span className={styles.typingDot}></span>
@@ -258,6 +321,31 @@ function ChatMessage({
                           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                         </svg>
                         <span>{t?.copy || "Salin"}</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    className={styles.actionBtn}
+                    onClick={handleDownloadDocx}
+                    type="button"
+                    disabled={isDownloadingDocx}
+                    title={t?.downloadDocx || "Unduh dokumen Word (.docx)"}
+                  >
+                    {isDownloadingDocx ? (
+                      <>
+                        <div className={styles.docActionMiniSpinner} />
+                        <span>{t?.docxDownloading || "Menyiapkan..."}</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <path d="M12 18v-6" />
+                          <path d="m9 15 3 3 3-3" />
+                        </svg>
+                        <span>{t?.downloadDocx || "Unduh .docx"}</span>
                       </>
                     )}
                   </button>
