@@ -31,6 +31,7 @@ export default function ChatPage() {
   // Gem Skill selection state for new/initial chats
   const [selectedGemId, setSelectedGemId] = useState<string | null>(null);
   const [gemWarning, setGemWarning] = useState<boolean>(false);
+  const [inputDraft, setInputDraft] = useState<string>("");
 
   // Settings & Gem Skills Hook (Dark mode & Bahasa Indonesia default)
   const {
@@ -167,7 +168,7 @@ export default function ChatPage() {
 
   // Handle send message with Gem Skill requirement validation
   const handleSend = useCallback(
-    (text: string) => {
+    (text: string, images?: string[]) => {
       // If fresh/empty chat and no Gem has been picked yet, require user to choose one
       if (!hasMessages && !selectedGemId) {
         setGemWarning(true);
@@ -179,11 +180,12 @@ export default function ChatPage() {
 
       setGemWarning(false);
       shouldAutoScrollRef.current = true;
+      setInputDraft("");
       const actualGemId = selectedGemId === "general" ? null : selectedGemId;
       if (actualGemId !== activeGem?.id) {
         setActiveGemId(actualGemId);
       }
-      sendMessage(text, selectedModel, getComputedSystemPrompt());
+      sendMessage(text, selectedModel, getComputedSystemPrompt(), images);
     },
     [hasMessages, selectedGemId, activeGem, setActiveGemId, sendMessage, selectedModel, getComputedSystemPrompt]
   );
@@ -195,6 +197,7 @@ export default function ChatPage() {
     loadMessages([]);
     setSelectedGemId(null);
     setActiveGemId(null);
+    setInputDraft("");
     setGemWarning(false);
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setSidebarOpen(false);
@@ -229,6 +232,19 @@ export default function ChatPage() {
 
   // List of all Gem options to display on empty chat
   const gemOptions = useMemo(() => [
+    {
+      id: "general",
+      name: t.welcome.generalName,
+      description: t.welcome.generalDesc,
+      color: "#06b6d4",
+      gradient: "linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(14, 165, 233, 0.06))",
+      borderColor: "rgba(6, 182, 212, 0.45)",
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ),
+    },
     {
       id: "psychologist-counselor",
       name: t.builtInGems.psychologistCounselor.name,
@@ -299,19 +315,6 @@ export default function ChatPage() {
         </svg>
       ),
     },
-    {
-      id: "general",
-      name: t.welcome.generalName,
-      description: t.welcome.generalDesc,
-      color: "#06b6d4",
-      gradient: "linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(14, 165, 233, 0.06))",
-      borderColor: "rgba(6, 182, 212, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      ),
-    },
     ...settings.customGems.map((cg) => ({
       id: cg.id,
       name: cg.name,
@@ -338,7 +341,17 @@ export default function ChatPage() {
     return t.gemStarters.general;
   }, [selectedGemId, t]);
 
-  // Contextual input placeholder
+  // Paste starter topic into input textarea without auto-sending
+  const handleStarterClick = useCallback((prompt: string) => {
+    setInputDraft(prompt);
+    setTimeout(() => {
+      const el = document.getElementById("chat-input") as HTMLTextAreaElement | null;
+      if (el) {
+        el.focus();
+        el.selectionStart = el.selectionEnd = el.value.length;
+      }
+    }, 40);
+  }, []);
   const currentInputPlaceholder = useMemo(() => {
     if (hasMessages) {
       return t.chat.inputPlaceholder;
@@ -532,7 +545,7 @@ export default function ChatPage() {
                 </div>
                 <div className={styles.welcomeBadgeRow}>
                   <span className={selectedGemId ? styles.gemSelectedBadge : styles.gemRequiredBadge}>
-                    {selectedGemId ? `✓ ${t.welcome.gemSelectedBadge}` : `⚠️ ${t.welcome.chooseGemRequiredBadge}`}
+                    {selectedGemId ? `✓ ${t.welcome.gemSelectedBadge}` : `${t.welcome.chooseGemRequiredBadge}`}
                   </span>
                 </div>
                 <h2 className={styles.welcomeTitle}>
@@ -615,11 +628,11 @@ export default function ChatPage() {
                         key={pIdx}
                         type="button"
                         className={styles.starterChip}
-                        onClick={() => handleSend(prompt)}
-                        title={prompt}
+                        onClick={() => handleStarterClick(prompt)}
+                        title={settings.language === "en" ? "Insert into message input to customize" : "Tempel ke percakapan untuk disesuaikan"}
                       >
                         <span className={styles.starterChipText}>{prompt}</span>
-                        <span className={styles.starterChipArrow}>→</span>
+                        <span className={styles.starterChipArrow}>✎</span>
                       </button>
                     ))}
                   </div>
@@ -632,6 +645,8 @@ export default function ChatPage() {
         {/* ── Input Area ──────────────────────────────────────── */}
         <div className={styles.inputArea}>
           <ChatInput
+            value={inputDraft}
+            onChange={setInputDraft}
             onSend={handleSend}
             onStop={stopStreaming}
             isStreaming={isStreaming}

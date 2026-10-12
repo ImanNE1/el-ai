@@ -34,12 +34,25 @@ export function isValidRole(role: string): role is "user" | "assistant" | "syste
   return ["user", "assistant", "system"].includes(role);
 }
 
+export type MessageContent =
+  | string
+  | Array<
+      | { type: "text"; text: string }
+      | { type: "image_url"; image_url: { url: string } }
+    >;
+
+export interface ValidatedMessage {
+  role: "user" | "assistant" | "system";
+  content: MessageContent;
+}
+
 /**
- * Validate and sanitize the messages array from client request.
+ * Validate and sanitize the messages array from client request,
+ * supporting both text strings and multimodal vision image parts.
  */
 export function validateMessages(
   messages: unknown
-): { valid: true; messages: Array<{ role: string; content: string }> } | { valid: false; error: string } {
+): { valid: true; messages: ValidatedMessage[] } | { valid: false; error: string } {
   if (!Array.isArray(messages)) {
     return { valid: false, error: "Messages must be an array." };
   }
@@ -52,7 +65,7 @@ export function validateMessages(
     return { valid: false, error: `Too many messages. Maximum is ${MAX_MESSAGES_PER_REQUEST}.` };
   }
 
-  const sanitized: Array<{ role: string; content: string }> = [];
+  const sanitized: ValidatedMessage[] = [];
 
   for (const msg of messages) {
     if (typeof msg !== "object" || msg === null) {
@@ -65,16 +78,57 @@ export function validateMessages(
       return { valid: false, error: `Invalid role: "${role}". Must be user, assistant, or system.` };
     }
 
-    if (typeof content !== "string") {
-      return { valid: false, error: "Message content must be a string." };
+    // 1. Text-only message
+    if (typeof content === "string") {
+      const sanitizedContent = sanitizeMessage(content);
+      if (sanitizedContent.length === 0) {
+        continue; // Skip empty messages
+      }
+      sanitized.push({ role, content: sanitizedContent });
+      continue;
     }
 
-    const sanitizedContent = sanitizeMessage(content);
-    if (sanitizedContent.length === 0) {
-      continue; // Skip empty messages
+    // 2. Multimodal parts array (text and/or image_url)
+    if (Array.isArray(content)) {
+      const sanitizedParts: Array<
+        | { type: "text"; text: string }
+        | { type: "image_url"; image_url: { url: string } }
+      > = [];
+
+      for (const part of content) {
+        if (typeof part !== "object" || part === null) continue;
+        const p = part as Record<string, unknown>;
+
+        if (p.type === "text" && typeof p.text === "string") {
+          const cleanText = sanitizeMessage(p.text);
+          if (cleanText) {
+            sanitizedParts.push({ type: "text", text: cleanText });
+          }
+        } else if (p.type === "image_url" && typeof p.image_url === "object" && p.image_url !== null) {
+          const imgObj = p.image_url as Record<string, unknown>;
+          const url = imgObj.url;
+          if (
+            typeof url === "string" &&
+            (url.startsWith("data:image/") || url.startsWith("http://") || url.startsWith("https://"))
+          ) {
+            // Cap at 15MB to prevent memory exhaustion
+            if (url.length <= 15 * 1024 * 1024) {
+              sanitizedParts.push({
+                type: "image_url",
+                image_url: { url },
+              });
+            }
+          }
+        }
+      }
+
+      if (sanitizedParts.length > 0) {
+        sanitized.push({ role, content: sanitizedParts });
+        continue;
+      }
     }
 
-    sanitized.push({ role, content: sanitizedContent });
+    return { valid: false, error: "Message content must be a string or valid content parts array." };
   }
 
   if (sanitized.length === 0) {

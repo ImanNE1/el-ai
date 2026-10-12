@@ -42,6 +42,8 @@ function ChatMessage({
 
   const hasReasoning = Boolean(message.reasoning && message.reasoning.trim().length > 0);
 
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
   return (
     <div
       className={`${styles.messageRow} ${isUser ? styles.userRow : styles.assistantRow}`}
@@ -74,7 +76,35 @@ function ChatMessage({
 
         <div className={styles.content}>
           {isUser ? (
-            <p>{message.content}</p>
+            <>
+              {message.images && message.images.length > 0 && (
+                <div className={styles.messageImagesGrid}>
+                  {message.images.map((imgSrc, imgIdx) => (
+                    <div
+                      key={imgIdx}
+                      className={styles.messageImageCard}
+                      onClick={() => setZoomedImage(imgSrc)}
+                      title={t?.imageZoomHint || "Klik untuk memperbesar gambar"}
+                    >
+                      <img
+                        src={imgSrc}
+                        alt={`Lampiran gambar ${imgIdx + 1}`}
+                        className={styles.messageAttachedImg}
+                      />
+                      <div className={styles.imageZoomIcon}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <circle cx="11" cy="11" r="8" />
+                          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                          <line x1="11" y1="8" x2="11" y2="14" />
+                          <line x1="8" y1="11" x2="14" y2="11" />
+                        </svg>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {message.content && <p>{message.content}</p>}
+            </>
           ) : (
             <>
               {/* Optional Reasoning / Thinking process */}
@@ -167,6 +197,26 @@ function ChatMessage({
           )}
         </div>
       </div>
+
+      {/* Lightbox Fullscreen Preview */}
+      {zoomedImage && (
+        <div className={styles.lightboxOverlay} onClick={() => setZoomedImage(null)}>
+          <div className={styles.lightboxModal} onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className={styles.lightboxCloseBtn}
+              onClick={() => setZoomedImage(null)}
+              aria-label="Tutup pratinjau gambar"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <img src={zoomedImage} alt="Pratinjau gambar penuh" className={styles.lightboxImg} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -176,6 +226,7 @@ export default React.memo(ChatMessage, (prev, next) => {
     prev.message.id === next.message.id &&
     prev.message.content === next.message.content &&
     prev.message.reasoning === next.message.reasoning &&
+    prev.message.images === next.message.images &&
     prev.message.model === next.message.model &&
     prev.isStreaming === next.isStreaming &&
     prev.isLastAssistant === next.isLastAssistant &&

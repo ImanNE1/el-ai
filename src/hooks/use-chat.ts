@@ -10,6 +10,7 @@ export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
+  images?: string[];
   reasoning?: string;
   timestamp: number;
   model?: string;
@@ -92,8 +93,15 @@ export function useChat(options: UseChatOptions = {}) {
   }, []);
 
   const sendMessage = useCallback(
-    async (content: string, modelOverride?: string, customPrompt?: string) => {
-      if (!content.trim() || isStreaming) return;
+    async (
+      content: string,
+      modelOverride?: string,
+      customPrompt?: string,
+      images?: string[]
+    ) => {
+      const hasText = content.trim().length > 0;
+      const hasImages = Array.isArray(images) && images.length > 0;
+      if ((!hasText && !hasImages) || isStreaming) return;
 
       setError(null);
 
@@ -103,6 +111,7 @@ export function useChat(options: UseChatOptions = {}) {
         id: generateId(),
         role: "user",
         content: content.trim(),
+        images: hasImages ? images : undefined,
         timestamp: Date.now(),
       };
 
@@ -124,11 +133,38 @@ export function useChat(options: UseChatOptions = {}) {
       abortRef.current = controller;
 
       try {
-        // Build message history for API (exclude the empty assistant placeholder)
-        const apiMessages = [...messages, userMessage].map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
+        // Build message history for API, formatting multimodal messages appropriately
+        const apiMessages = [...messages, userMessage].map((m) => {
+          if (m.role === "user" && m.images && m.images.length > 0) {
+            const parts: Array<
+              | { type: "text"; text: string }
+              | { type: "image_url"; image_url: { url: string } }
+            > = [];
+
+            if (m.content) {
+              parts.push({ type: "text", text: m.content });
+            } else {
+              parts.push({ type: "text", text: "Jelaskan gambar ini dan berikan informasi detail konteksnya." });
+            }
+
+            for (const img of m.images) {
+              parts.push({
+                type: "image_url",
+                image_url: { url: img },
+              });
+            }
+
+            return {
+              role: m.role,
+              content: parts,
+            };
+          }
+
+          return {
+            role: m.role,
+            content: m.content,
+          };
+        });
 
         const res = await fetch("/api/chat", {
           method: "POST",
@@ -274,7 +310,7 @@ export function useChat(options: UseChatOptions = {}) {
         return prev;
       });
 
-      sendMessage(lastUserMsg.content, modelOverride);
+      sendMessage(lastUserMsg.content, modelOverride, undefined, lastUserMsg.images);
     },
     [messages, isStreaming, sendMessage]
   );

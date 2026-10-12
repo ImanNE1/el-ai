@@ -80,6 +80,10 @@ export interface TranslationDictionary {
     copy: string;
     copied: string;
     regenerate: string;
+    uploadImage: string;
+    dropImagesHere: string;
+    removeImage: string;
+    imageZoomHint: string;
   };
   modelSelector: {
     selectModel: string;
@@ -219,6 +223,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       copy: "Salin",
       copied: "Tersalin",
       regenerate: "Buat Ulang",
+      uploadImage: "Unggah gambar (atau paste Ctrl+V)",
+      dropImagesHere: "Lepaskan gambar di sini...",
+      removeImage: "Hapus gambar",
+      imageZoomHint: "Klik untuk memperbesar gambar",
     },
     modelSelector: {
       selectModel: "Pilih Model",
@@ -388,6 +396,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       copy: "Copy",
       copied: "Copied",
       regenerate: "Regenerate",
+      uploadImage: "Upload image (or paste Ctrl+V)",
+      dropImagesHere: "Drop images here...",
+      removeImage: "Remove image",
+      imageZoomHint: "Click to zoom image",
     },
     modelSelector: {
       selectModel: "Select Model",
