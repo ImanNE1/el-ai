@@ -25,6 +25,15 @@ import {
   PenTool,
   GraduationCap,
   Lightbulb,
+  Scale,
+  Handshake,
+  Clock,
+  ShieldAlert,
+  Compass,
+  UtensilsCrossed,
+  ShoppingBag,
+  Wallet,
+  CheckSquare,
   Plus,
   Globe,
   Sun,
@@ -250,7 +259,7 @@ export default function ChatPage() {
     [switchSession, sessions, loadMessages, setActiveGemId]
   );
 
-  // List of all Gem options with monospace indices
+  // List of all Gem options ordered by hot topic popularity with distinct subtle color themes
   const gemOptions = useMemo(
     () => [
       {
@@ -260,54 +269,254 @@ export default function ChatPage() {
         description: t.welcome.generalDesc,
         statusLabel: "SCALE / ACTIVE",
         icon: <Sparkles className="w-4 h-4 text-[#10B981]" />,
+        theme: {
+          accent: "#10B981",
+          selectedBg: "bg-emerald-500/[0.08] dark:bg-emerald-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-emerald-500/40 dark:ring-emerald-400/40",
+          badgeBg: "bg-emerald-500/15 border-emerald-500/35 text-emerald-800 dark:text-emerald-300",
+          indexText: "text-emerald-700 dark:text-emerald-400 font-medium",
+          actionText: "text-emerald-700 dark:text-emerald-400 font-medium",
+        },
       },
       {
-        id: "psychologist-counselor",
+        id: "finance-budget-strategist",
         index: "02",
-        name: t.builtInGems.psychologistCounselor.name,
-        description: t.builtInGems.psychologistCounselor.description,
-        statusLabel: "EMPATHIC / VERIFIED",
-        icon: <Heart className="w-4 h-4 text-[#F43F5E]" />,
+        name: t.builtInGems.financeBudgetStrategist.name,
+        description: t.builtInGems.financeBudgetStrategist.description,
+        statusLabel: "50/30/20 BUDGET",
+        icon: <Wallet className="w-4 h-4 text-[#0D9488]" />,
+        theme: {
+          accent: "#0D9488",
+          selectedBg: "bg-teal-500/[0.08] dark:bg-teal-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-teal-500/40 dark:ring-teal-400/40",
+          badgeBg: "bg-teal-500/15 border-teal-500/35 text-teal-800 dark:text-teal-300",
+          indexText: "text-teal-700 dark:text-teal-400 font-medium",
+          actionText: "text-teal-700 dark:text-teal-400 font-medium",
+        },
+      },
+      {
+        id: "decision-matrix-maker",
+        index: "03",
+        name: t.builtInGems.decisionMatrixMaker.name,
+        description: t.builtInGems.decisionMatrixMaker.description,
+        statusLabel: "MULTI-CRITERIA",
+        icon: <Scale className="w-4 h-4 text-[#6366F1]" />,
+        theme: {
+          accent: "#6366F1",
+          selectedBg: "bg-indigo-500/[0.08] dark:bg-indigo-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-indigo-500/40 dark:ring-indigo-400/40",
+          badgeBg: "bg-indigo-500/15 border-indigo-500/35 text-indigo-800 dark:text-indigo-300",
+          indexText: "text-indigo-700 dark:text-indigo-400 font-medium",
+          actionText: "text-indigo-700 dark:text-indigo-400 font-medium",
+        },
       },
       {
         id: "code-architect",
-        index: "03",
+        index: "04",
         name: t.builtInGems.codeArchitect.name,
         description: t.builtInGems.codeArchitect.description,
-        statusLabel: "SYSTEMS / HIGH",
-        icon: <Code2 className="w-4 h-4 text-[#10B981]" />,
+        statusLabel: "SYSTEMS / ARCH",
+        icon: <Code2 className="w-4 h-4 text-[#8B5CF6]" />,
+        theme: {
+          accent: "#8B5CF6",
+          selectedBg: "bg-violet-500/[0.08] dark:bg-violet-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-violet-500/40 dark:ring-violet-400/40",
+          badgeBg: "bg-violet-500/15 border-violet-500/35 text-violet-800 dark:text-violet-300",
+          indexText: "text-violet-700 dark:text-violet-400 font-medium",
+          actionText: "text-violet-700 dark:text-violet-400 font-medium",
+        },
+      },
+      {
+        id: "productivity-planner",
+        index: "05",
+        name: t.builtInGems.productivityPlanner.name,
+        description: t.builtInGems.productivityPlanner.description,
+        statusLabel: "TIME-BLOCKING",
+        icon: <Clock className="w-4 h-4 text-[#F59E0B]" />,
+        theme: {
+          accent: "#F59E0B",
+          selectedBg: "bg-amber-500/[0.08] dark:bg-amber-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-amber-500/40 dark:ring-amber-400/40",
+          badgeBg: "bg-amber-500/15 border-amber-500/35 text-amber-800 dark:text-amber-300",
+          indexText: "text-amber-700 dark:text-amber-400 font-medium",
+          actionText: "text-amber-700 dark:text-amber-400 font-medium",
+        },
+      },
+      {
+        id: "negotiation-strategist",
+        index: "06",
+        name: t.builtInGems.negotiationStrategist.name,
+        description: t.builtInGems.negotiationStrategist.description,
+        statusLabel: "HARVARD PON",
+        icon: <Handshake className="w-4 h-4 text-[#EA580C]" />,
+        theme: {
+          accent: "#EA580C",
+          selectedBg: "bg-orange-500/[0.08] dark:bg-orange-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-orange-500/40 dark:ring-orange-400/40",
+          badgeBg: "bg-orange-500/15 border-orange-500/35 text-orange-800 dark:text-orange-300",
+          indexText: "text-orange-700 dark:text-orange-400 font-medium",
+          actionText: "text-orange-700 dark:text-orange-400 font-medium",
+        },
+      },
+      {
+        id: "psychologist-counselor",
+        index: "07",
+        name: t.builtInGems.psychologistCounselor.name,
+        description: t.builtInGems.psychologistCounselor.description,
+        statusLabel: "EMPATHIC / CBT",
+        icon: <Heart className="w-4 h-4 text-[#F43F5E]" />,
+        theme: {
+          accent: "#F43F5E",
+          selectedBg: "bg-rose-500/[0.08] dark:bg-rose-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-rose-500/40 dark:ring-rose-400/40",
+          badgeBg: "bg-rose-500/15 border-rose-500/35 text-rose-800 dark:text-rose-300",
+          indexText: "text-rose-700 dark:text-rose-400 font-medium",
+          actionText: "text-rose-700 dark:text-rose-400 font-medium",
+        },
+      },
+      {
+        id: "devils-advocate",
+        index: "08",
+        name: t.builtInGems.devilsAdvocate.name,
+        description: t.builtInGems.devilsAdvocate.description,
+        statusLabel: "RED TEAM / SKEPTIC",
+        icon: <ShieldAlert className="w-4 h-4 text-[#E11D48]" />,
+        theme: {
+          accent: "#E11D48",
+          selectedBg: "bg-red-500/[0.08] dark:bg-red-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-red-500/40 dark:ring-red-400/40",
+          badgeBg: "bg-red-500/15 border-red-500/35 text-red-800 dark:text-red-300",
+          indexText: "text-red-700 dark:text-red-400 font-medium",
+          actionText: "text-red-700 dark:text-red-400 font-medium",
+        },
+      },
+      {
+        id: "smart-shopper",
+        index: "09",
+        name: t.builtInGems.smartShopper.name,
+        description: t.builtInGems.smartShopper.description,
+        statusLabel: "BENCHMARK / VALUE",
+        icon: <ShoppingBag className="w-4 h-4 text-[#2563EB]" />,
+        theme: {
+          accent: "#2563EB",
+          selectedBg: "bg-blue-500/[0.08] dark:bg-blue-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-blue-500/40 dark:ring-blue-400/40",
+          badgeBg: "bg-blue-500/15 border-blue-500/35 text-blue-800 dark:text-blue-300",
+          indexText: "text-blue-700 dark:text-blue-400 font-medium",
+          actionText: "text-blue-700 dark:text-blue-400 font-medium",
+        },
+      },
+      {
+        id: "project-sop-builder",
+        index: "10",
+        name: t.builtInGems.projectSopBuilder.name,
+        description: t.builtInGems.projectSopBuilder.description,
+        statusLabel: "SOP / MILESTONES",
+        icon: <CheckSquare className="w-4 h-4 text-[#059669]" />,
+        theme: {
+          accent: "#059669",
+          selectedBg: "bg-emerald-600/[0.08] dark:bg-emerald-600/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-emerald-600/40 dark:ring-emerald-500/40",
+          badgeBg: "bg-emerald-600/15 border-emerald-600/35 text-emerald-900 dark:text-emerald-300",
+          indexText: "text-emerald-800 dark:text-emerald-400 font-medium",
+          actionText: "text-emerald-800 dark:text-emerald-400 font-medium",
+        },
       },
       {
         id: "writing-editor",
-        index: "04",
+        index: "11",
         name: t.builtInGems.writingEditor.name,
         description: t.builtInGems.writingEditor.description,
         statusLabel: "SWISS EDITORIAL",
-        icon: <PenTool className="w-4 h-4 text-[#F59E0B]" />,
+        icon: <PenTool className="w-4 h-4 text-[#B45309]" />,
+        theme: {
+          accent: "#B45309",
+          selectedBg: "bg-amber-600/[0.08] dark:bg-amber-600/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-amber-600/40 dark:ring-amber-500/40",
+          badgeBg: "bg-amber-600/15 border-amber-600/35 text-amber-900 dark:text-amber-300",
+          indexText: "text-amber-800 dark:text-amber-400 font-medium",
+          actionText: "text-amber-800 dark:text-amber-400 font-medium",
+        },
+      },
+      {
+        id: "travel-concierge",
+        index: "12",
+        name: t.builtInGems.travelConcierge.name,
+        description: t.builtInGems.travelConcierge.description,
+        statusLabel: "GEO-OPTIMIZED",
+        icon: <Compass className="w-4 h-4 text-[#0284C7]" />,
+        theme: {
+          accent: "#0284C7",
+          selectedBg: "bg-sky-500/[0.08] dark:bg-sky-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-sky-500/40 dark:ring-sky-400/40",
+          badgeBg: "bg-sky-500/15 border-sky-500/35 text-sky-800 dark:text-sky-300",
+          indexText: "text-sky-700 dark:text-sky-400 font-medium",
+          actionText: "text-sky-700 dark:text-sky-400 font-medium",
+        },
+      },
+      {
+        id: "chef-meal-planner",
+        index: "13",
+        name: t.builtInGems.chefMealPlanner.name,
+        description: t.builtInGems.chefMealPlanner.description,
+        statusLabel: "ZERO-WASTE",
+        icon: <UtensilsCrossed className="w-4 h-4 text-[#F97316]" />,
+        theme: {
+          accent: "#F97316",
+          selectedBg: "bg-orange-500/[0.08] dark:bg-orange-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-orange-500/40 dark:ring-orange-400/40",
+          badgeBg: "bg-orange-500/15 border-orange-500/35 text-orange-800 dark:text-orange-300",
+          indexText: "text-orange-700 dark:text-orange-400 font-medium",
+          actionText: "text-orange-700 dark:text-orange-400 font-medium",
+        },
       },
       {
         id: "learning-coach",
-        index: "05",
+        index: "14",
         name: t.builtInGems.learningCoach.name,
         description: t.builtInGems.learningCoach.description,
-        statusLabel: "SOCRATIC / ACTIVE",
-        icon: <GraduationCap className="w-4 h-4 text-[#10B981]" />,
+        statusLabel: "SOCRATIC / FEYNMAN",
+        icon: <GraduationCap className="w-4 h-4 text-[#06B6D4]" />,
+        theme: {
+          accent: "#06B6D4",
+          selectedBg: "bg-cyan-500/[0.08] dark:bg-cyan-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-cyan-500/40 dark:ring-cyan-400/40",
+          badgeBg: "bg-cyan-500/15 border-cyan-500/35 text-cyan-800 dark:text-cyan-300",
+          indexText: "text-cyan-700 dark:text-cyan-400 font-medium",
+          actionText: "text-cyan-700 dark:text-cyan-400 font-medium",
+        },
       },
       {
         id: "creative-brainstormer",
-        index: "06",
+        index: "15",
         name: t.builtInGems.creativeBrainstormer.name,
         description: t.builtInGems.creativeBrainstormer.description,
-        statusLabel: "DIVERGENT",
-        icon: <Lightbulb className="w-4 h-4 text-[#F59E0B]" />,
+        statusLabel: "LATERAL / DIVERGENT",
+        icon: <Lightbulb className="w-4 h-4 text-[#D946EF]" />,
+        theme: {
+          accent: "#D946EF",
+          selectedBg: "bg-fuchsia-500/[0.08] dark:bg-fuchsia-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-fuchsia-500/40 dark:ring-fuchsia-400/40",
+          badgeBg: "bg-fuchsia-500/15 border-fuchsia-500/35 text-fuchsia-800 dark:text-fuchsia-300",
+          indexText: "text-fuchsia-700 dark:text-fuchsia-400 font-medium",
+          actionText: "text-fuchsia-700 dark:text-fuchsia-400 font-medium",
+        },
       },
       ...settings.customGems.map((cg, cIdx) => ({
         id: cg.id,
-        index: `0${7 + cIdx}`,
+        index: String(16 + cIdx).padStart(2, "0"),
         name: cg.name,
         description: cg.description,
         statusLabel: "CUSTOM VECTOR",
         icon: <Layers className="w-4 h-4 text-[#10B981]" />,
+        theme: {
+          accent: "#10B981",
+          selectedBg: "bg-emerald-500/[0.08] dark:bg-emerald-500/[0.16]",
+          selectedRing: "ring-1 ring-inset ring-emerald-500/40 dark:ring-emerald-400/40",
+          badgeBg: "bg-emerald-500/15 border-emerald-500/35 text-emerald-800 dark:text-emerald-300",
+          indexText: "text-emerald-700 dark:text-emerald-400 font-medium",
+          actionText: "text-emerald-700 dark:text-emerald-400 font-medium",
+        },
       })),
     ],
     [t, settings.customGems]
@@ -321,6 +530,15 @@ export default function ChatPage() {
     if (selectedGemId === "writing-editor") return t.gemStarters.writingEditor;
     if (selectedGemId === "learning-coach") return t.gemStarters.learningCoach;
     if (selectedGemId === "creative-brainstormer") return t.gemStarters.creativeBrainstormer;
+    if (selectedGemId === "decision-matrix-maker") return t.gemStarters.decisionMatrix;
+    if (selectedGemId === "negotiation-strategist") return t.gemStarters.negotiation;
+    if (selectedGemId === "productivity-planner") return t.gemStarters.productivity;
+    if (selectedGemId === "devils-advocate") return t.gemStarters.devilsAdvocate;
+    if (selectedGemId === "travel-concierge") return t.gemStarters.travel;
+    if (selectedGemId === "chef-meal-planner") return t.gemStarters.chefMeal;
+    if (selectedGemId === "smart-shopper") return t.gemStarters.smartShopper;
+    if (selectedGemId === "finance-budget-strategist") return t.gemStarters.financeBudget;
+    if (selectedGemId === "project-sop-builder") return t.gemStarters.projectSop;
     return t.gemStarters.general;
   }, [selectedGemId, t]);
 
@@ -539,37 +757,38 @@ export default function ChatPage() {
                 </div>
               )}
 
-              {/* 2x3 Architectural Grid with Exposed Hairline Borders */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border border-[#E5E5E0] dark:border-[#27272A] divide-y md:divide-y-0 md:divide-x divide-[#E5E5E0] dark:divide-[#27272A] mb-8 bg-black/[0.015] dark:bg-white/[0.015]">
+              {/* Architectural Grid with Exposed Hairline Borders */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#E5E5E0] dark:bg-[#27272A] border border-[#E5E5E0] dark:border-[#27272A] mb-8">
                 {gemOptions.map((gem) => {
                   const isSelected = selectedGemId === gem.id;
+                  const theme = gem.theme;
 
                   return (
                     <button
                       key={gem.id}
                       type="button"
                       onClick={() => handleSelectGem(gem.id)}
-                      className={`p-6 text-left flex flex-col justify-between group transition-colors duration-150 border-b border-[#E5E5E0] dark:border-[#27272A] ${
+                      className={`p-6 text-left flex flex-col justify-between group transition-all duration-150 relative ${
                         isSelected
-                          ? "bg-[#111111] text-[#F9F9F8] dark:bg-[#FAFAFA] dark:text-[#09090B]"
-                          : "hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                          ? `${theme.selectedBg} ${theme.selectedRing}`
+                          : "bg-[#F9F9F8] dark:bg-[#09090B] hover:bg-black/[0.025] dark:hover:bg-white/[0.035]"
                       }`}
                     >
                       <div>
                         {/* Top row: Monospace Index + Status Pill */}
                         <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#E5E5E0]/60 dark:border-[#27272A]/60">
                           <span
-                            className={`font-mono text-sm font-light ${
-                              isSelected ? "text-[#F9F9F8] dark:text-[#09090B]" : "text-[#666666] dark:text-[#A1A1AA]"
+                            className={`font-mono text-sm font-light transition-colors ${
+                              isSelected ? theme.indexText : "text-[#666666] dark:text-[#A1A1AA]"
                             }`}
                           >
                             {gem.index} //
                           </span>
                           <span
-                            className={`font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border ${
+                            className={`font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border transition-colors ${
                               isSelected
-                                ? "border-white/30 bg-white/20 text-white dark:border-black/30 dark:bg-black/10 dark:text-black"
-                                : "border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981]"
+                                ? theme.badgeBg
+                                : "border-[#E5E5E0] dark:border-[#27272A] bg-black/[0.03] dark:bg-white/[0.04] text-[#666666] dark:text-[#A1A1AA]"
                             }`}
                           >
                             {isSelected ? "✓ ACTIVE" : gem.statusLabel}
@@ -579,13 +798,15 @@ export default function ChatPage() {
                         {/* Title with icon */}
                         <div className="flex items-center gap-2 mb-2">
                           {gem.icon}
-                          <span className="font-medium text-base tracking-tight">{gem.name}</span>
+                          <span className="font-medium text-base tracking-tight text-[#111111] dark:text-[#FAFAFA]">
+                            {gem.name}
+                          </span>
                         </div>
 
                         {/* Description */}
                         <p
-                          className={`text-xs leading-relaxed font-normal mb-6 ${
-                            isSelected ? "text-[#F9F9F8]/80 dark:text-[#09090B]/80" : "text-[#666666] dark:text-[#A1A1AA]"
+                          className={`text-xs leading-relaxed font-normal mb-6 transition-colors ${
+                            isSelected ? "text-[#333333] dark:text-[#D4D4D8]" : "text-[#666666] dark:text-[#A1A1AA]"
                           }`}
                         >
                           {gem.description}
@@ -594,8 +815,8 @@ export default function ChatPage() {
 
                       {/* Directional Action */}
                       <div
-                        className={`inline-flex items-center gap-1.5 font-mono text-[11px] ${
-                          isSelected ? "text-[#10B981]" : "text-[#111111] dark:text-[#FAFAFA] group-hover:text-[#10B981]"
+                        className={`inline-flex items-center gap-1.5 font-mono text-[11px] transition-colors ${
+                          isSelected ? theme.actionText : "text-[#111111] dark:text-[#FAFAFA] group-hover:text-[#10B981]"
                         }`}
                       >
                         <span>{isSelected ? "Specialization Loaded" : "Activate Persona"}</span>

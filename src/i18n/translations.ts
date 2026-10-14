@@ -63,6 +63,15 @@ export interface TranslationDictionary {
     writingEditor: string[];
     learningCoach: string[];
     creativeBrainstormer: string[];
+    decisionMatrix: string[];
+    negotiation: string[];
+    productivity: string[];
+    devilsAdvocate: string[];
+    travel: string[];
+    chefMeal: string[];
+    smartShopper: string[];
+    financeBudget: string[];
+    projectSop: string[];
     general: string[];
   };
   chat: {
@@ -166,6 +175,42 @@ export interface TranslationDictionary {
       description: string;
     };
     psychologistCounselor: {
+      name: string;
+      description: string;
+    };
+    decisionMatrixMaker: {
+      name: string;
+      description: string;
+    };
+    negotiationStrategist: {
+      name: string;
+      description: string;
+    };
+    productivityPlanner: {
+      name: string;
+      description: string;
+    };
+    devilsAdvocate: {
+      name: string;
+      description: string;
+    };
+    travelConcierge: {
+      name: string;
+      description: string;
+    };
+    chefMealPlanner: {
+      name: string;
+      description: string;
+    };
+    smartShopper: {
+      name: string;
+      description: string;
+    };
+    financeBudgetStrategist: {
+      name: string;
+      description: string;
+    };
+    projectSopBuilder: {
       name: string;
       description: string;
     };
@@ -328,6 +373,42 @@ export const translations: Record<Language, TranslationDictionary> = {
         name: "Psikolog Berpengalaman",
         description: "Psikolog klinis & konselor empatik yang menyediakan ruang aman, bimbingan berbasis bukti (CBT & Mindfulness), dan membantu mengurai kecemasan serta beban emosional.",
       },
+      decisionMatrixMaker: {
+        name: "Decision Matrix Maker",
+        description: "Membantu saat bingung memilih opsi dengan memetakan tabel Pro/Kontra, analisis cost-benefit, dan skenario terburuk.",
+      },
+      negotiationStrategist: {
+        name: "Negotiation & Persuasion Strategist",
+        description: "Menyusun strategi komunikasi taktis untuk negosiasi gaji, menawar harga vendor, atau menolak permintaan sopan namun tegas.",
+      },
+      productivityPlanner: {
+        name: "Productivity & Time-Blocking Planner",
+        description: "Mengubah to-do list menumpuk menjadi jadwal jam-per-jam realistis menggunakan Eisenhower Matrix atau Time-Blocking.",
+      },
+      devilsAdvocate: {
+        name: "Devil’s Advocate",
+        description: "Mencari celah, risiko tersembunyi, atau kelemahan dari rencana dan argumen sebelum dipresentasikan atau dieksekusi.",
+      },
+      travelConcierge: {
+        name: "Travel Concierge",
+        description: "Menyusun jadwal liburan dari nol: rute searah hemat waktu, estimasi biaya transportasi lokal, kuliner, dan packing list.",
+      },
+      chefMealPlanner: {
+        name: "Chef & Meal Prep Planner",
+        description: "Menyusun menu mingguan atau resep praktis dari bahan sisa kulkas, lengkap daftar belanjaan hemat & estimasi nutrisi.",
+      },
+      smartShopper: {
+        name: "Smart Shopper & Comparator",
+        description: "Menghemat waktu riset belanja: membandingkan spesifikasi produk, nilai price-to-performance, dan keluhan umum pengguna.",
+      },
+      financeBudgetStrategist: {
+        name: "Personal Finance Strategist",
+        description: "Merancang alokasi gaji bulanan (50/30/20), evaluasi pos pengeluaran bocor, dan simulasi tabungan target tanpa rumus rumit.",
+      },
+      projectSopBuilder: {
+        name: "Project Manager / SOP Builder",
+        description: "Memecah satu tujuan besar menjadi timeline kerja terstruktur, daftar checklist bertahap, dan SOP langkah demi langkah.",
+      },
     },
     gemStarters: {
       psychologist: [
@@ -354,6 +435,51 @@ export const translations: Record<Language, TranslationDictionary> = {
         "Beri saya 5 ide produk digital inovatif yang memecahkan masalah nyata...",
         "Brainstorm strategi peluncuran produk kreatif tanpa anggaran besar...",
         "Bantu eksplorasi sudut pandang unik dan tak terduga untuk ide ini...",
+      ],
+      decisionMatrix: [
+        "Bantu saya memilih antara 2 tawaran kerja (remote gaji sedang vs kantor gaji tinggi)...",
+        "Buat matriks keputusan pro/kontra untuk beli mobil listrik vs konvensional...",
+        "Saya bingung menentukan prioritas antara lanjut S2 atau mulai bisnis sendiri...",
+      ],
+      negotiation: [
+        "Bantu saya susun skrip dan taktik negosiasi kenaikan gaji tahunan ke atasan...",
+        "Bagaimana cara menawar harga jasa ke vendor/freelancer secara profesional?",
+        "Berikan kalimat sopan tapi tegas menolak revisi di luar kesepakatan (scope creep)...",
+      ],
+      productivity: [
+        "Ubah daftar tugas menumpuk ini menjadi jadwal time-blocking harian yang realistis...",
+        "Susun rencana kerja mingguan menggunakan prinsip Eisenhower Matrix dan Deep Work...",
+        "Bagaimana mengatur waktu antara kerja full-time, belajar skill baru, dan istirahat?",
+      ],
+      devilsAdvocate: [
+        "Uji rencana bisnis baru saya ini dan temukan semua celah atau risiko tersembunyinya...",
+        "Kritik dan cari kelemahan dari argumen presentasi proposal yang akan saya sampaikan...",
+        "Apa saja asumsi salah yang paling berpotensi menggagalkan peluncuran produk ini?",
+      ],
+      travel: [
+        "Rancang itinerary 4 hari 3 malam di Kyoto & Osaka dengan rute searah yang efisien...",
+        "Buat jadwal liburan hemat 5 hari di Bali beserta estimasi biaya dan kuliner lokal...",
+        "Siapkan packing list lengkap dan tips penting untuk perjalanan musim dingin di Jepang...",
+      ],
+      chefMeal: [
+        "Saya punya telur, tahu, wortel, dan sisa nasi di kulkas. Resep enak apa yang bisa dibuat?",
+        "Susun rencana meal prep sehat 5 hari kerja (tinggi protein, di bawah 30 menit)...",
+        "Buatkan daftar belanja mingguan hemat untuk makan berdua dengan budget Rp300.000...",
+      ],
+      smartShopper: [
+        "Bandingkan MacBook Air M3 vs Asus Zenbook 14 OLED untuk kerja kantoran dan coding...",
+        "Bantu saya memilih TWS noise-cancelling terbaik di bawah Rp1.500.000 (Sony vs Soundcore)...",
+        "Bandingkan iPhone 15 vs Samsung Galaxy S24: kelebihan, kekurangan, dan keluhan pengguna...",
+      ],
+      financeBudget: [
+        "Alokasikan gaji bulanan Rp8.000.000 dengan metode 50/30/20 dan dana darurat...",
+        "Simulasikan cara menabung Rp50.000.000 dalam 18 bulan dengan penghasilan saat ini...",
+        "Bagaimana strategi melunasi beberapa cicilan paling cepat (Snowball vs Avalanche)?",
+      ],
+      projectSop: [
+        "Buat SOP dan timeline kerja lengkap untuk peluncuran produk digital dalam 30 hari...",
+        "Pecah rencana pindah kantor/rumah menjadi checklist terstruktur minggu demi minggu...",
+        "Susun SOP alur penanganan komplain pelanggan (Customer Support Escalation SOP)...",
       ],
       general: [
         "Bantu saya menganalisis dan memecahkan permasalahan ini...",
@@ -517,6 +643,42 @@ export const translations: Record<Language, TranslationDictionary> = {
         name: "Experienced Psychologist",
         description: "Clinical psychologist & counselor providing compassionate listening, emotional regulation, and evidence-based guidance (CBT & Mindfulness) in a safe space.",
       },
+      decisionMatrixMaker: {
+        name: "Decision Matrix Maker",
+        description: "Decision consultant mapping Pro/Con matrices, cost-benefit analysis, and worst-case scenarios to evaluate complex dilemmas.",
+      },
+      negotiationStrategist: {
+        name: "Negotiation & Persuasion Strategist",
+        description: "Tactical communication strategies and word-for-word scripts for salary negotiation, vendor rates, and polite boundary setting.",
+      },
+      productivityPlanner: {
+        name: "Productivity & Time-Blocking Planner",
+        description: "Transforms overwhelming to-do lists into realistic hour-by-hour schedules using Eisenhower Matrix and Time-Blocking.",
+      },
+      devilsAdvocate: {
+        name: "Devil’s Advocate",
+        description: "Relentlessly stress-tests ideas, pitches, and assumptions to uncover blind spots, logical fallacies, and hidden vulnerabilities.",
+      },
+      travelConcierge: {
+        name: "Travel Concierge",
+        description: "Designs turnkey travel itineraries with optimized geographic routing, local transport costs, dining, and packing checklists.",
+      },
+      chefMealPlanner: {
+        name: "Chef & Meal Prep Planner",
+        description: "Weekly meal prep plans and quick recipes crafted from leftover fridge ingredients, with grocery lists and nutritional guidance.",
+      },
+      smartShopper: {
+        name: "Smart Shopper & Comparator",
+        description: "Accelerates purchasing decisions by comparing specs, price-to-performance value, real user pain points, and best-fit verdicts.",
+      },
+      financeBudgetStrategist: {
+        name: "Personal Finance Strategist",
+        description: "50/30/20 monthly salary allocation, expense leak detection, and savings milestone simulations without spreadsheet formulas.",
+      },
+      projectSopBuilder: {
+        name: "Project Manager / SOP Builder",
+        description: "Deconstructs macro goals into milestone timelines, actionable checklists, and step-by-step Standard Operating Procedures (SOPs).",
+      },
     },
     gemStarters: {
       psychologist: [
@@ -543,6 +705,51 @@ export const translations: Record<Language, TranslationDictionary> = {
         "Brainstorm 5 novel digital product ideas addressing real problems...",
         "Develop an unconventional zero-budget product launch strategy...",
         "Help me explore fresh, unexpected creative angles on this topic...",
+      ],
+      decisionMatrix: [
+        "Help me decide between two job offers (remote with medium pay vs on-site high pay)...",
+        "Build a decision matrix for buying an EV vs a conventional gas vehicle...",
+        "Analyze the trade-offs between pursuing a master's degree vs launching a startup...",
+      ],
+      negotiation: [
+        "Draft a tactical script for negotiating a salary increase with my manager...",
+        "How to negotiate vendor and freelance project pricing professionally?",
+        "Provide polite but firm language to decline scope creep from a client...",
+      ],
+      productivity: [
+        "Transform this chaotic 10-item to-do list into an hourly time-blocked schedule...",
+        "Organize my weekly workflow using the Eisenhower Matrix and Deep Work blocks...",
+        "How do I balance a full-time job, skill upskilling, and guilt-free rest?",
+      ],
+      devilsAdvocate: [
+        "Stress-test my new startup plan and reveal all hidden risks and failure points...",
+        "Critique and expose weaknesses in this proposal argument before my pitch...",
+        "What blind assumptions could derail this product launch?",
+      ],
+      travel: [
+        "Design a 4D3N Kyoto & Osaka itinerary with geographically optimized routes...",
+        "Plan a 5-day budget-friendly Bali trip with local transport and dining estimates...",
+        "Generate a comprehensive packing list and travel tips for winter in Hokkaido...",
+      ],
+      chefMeal: [
+        "I only have eggs, tofu, carrots, and leftover rice. What delicious quick meal can I cook?",
+        "Build a 5-day high-protein meal prep plan with under 30-minute prep times...",
+        "Generate a budget-friendly weekly grocery list and meal schedule for two...",
+      ],
+      smartShopper: [
+        "Compare MacBook Air M3 vs Asus Zenbook 14 OLED for software engineering and battery life...",
+        "Compare the top ANC wireless earbuds under $100: specs, comfort, and sound profile...",
+        "iPhone 15 vs Samsung Galaxy S24: price-to-performance breakdown and common user complaints...",
+      ],
+      financeBudget: [
+        "Allocate a monthly income using the 50/30/20 budgeting rule and emergency fund goals...",
+        "Simulate a realistic savings roadmap to reach $10,000 within 12 months...",
+        "Compare debt payoff strategies (Snowball vs Avalanche) for credit card balances...",
+      ],
+      projectSop: [
+        "Create a 30-day product launch project plan with milestone checklists and contingency SOP...",
+        "Break down moving to a new office into a phased, week-by-week actionable checklist...",
+        "Draft a Customer Support Escalation Standard Operating Procedure (SOP)...",
       ],
       general: [
         "Help me analyze and solve this problem step by step...",
