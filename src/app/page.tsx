@@ -585,7 +585,7 @@ export default function ChatPage() {
       {/* ── Main Chat Area ────────────────────────────────────────── */}
       <main className="flex-1 flex flex-col w-full h-full h-dvh min-h-0 min-w-0 relative overflow-hidden bg-[#F9F9F8] dark:bg-[#09090B]">
         {/* Minimalist Sticky Header with Exposed 1px Bottom Border */}
-        <header className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 h-14 border-b border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md flex-shrink-0">
+        <header className="sticky top-0 z-20 flex items-center justify-between px-2.5 sm:px-6 h-14 border-b border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md flex-shrink-0">
           <div className="flex items-center gap-3.5">
             {/* Sidebar Toggle */}
             <button
@@ -626,7 +626,7 @@ export default function ChatPage() {
           </div>
 
           {/* Header Controls Right Cluster */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             {/* Active Gem Skill Pill */}
             {activeGem && (
               <button
@@ -701,7 +701,7 @@ export default function ChatPage() {
         {hasMessages ? (
           <div
             ref={messagesAreaRef}
-            className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6"
+            className="flex-1 overflow-y-auto px-2 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6"
             onScroll={handleScroll}
           >
             {messages.map((msg, idx) => {
@@ -734,7 +734,7 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
         ) : (
-          <div ref={messagesAreaRef} className="flex-1 overflow-y-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div ref={messagesAreaRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-6 sm:py-12">
             <div className="max-w-4xl mx-auto">
               {/* Editorial Welcome Header */}
               <div className="mb-10 pb-6 border-b border-[#E5E5E0] dark:border-[#27272A]">
@@ -768,7 +768,7 @@ export default function ChatPage() {
                       key={gem.id}
                       type="button"
                       onClick={() => handleSelectGem(gem.id)}
-                      className={`p-6 text-left flex flex-col justify-between group transition-all duration-150 relative ${
+                      className={`p-4 sm:p-6 text-left flex flex-col justify-between group transition-all duration-150 relative ${
                         isSelected
                           ? `${theme.selectedBg} ${theme.selectedRing}`
                           : "bg-[#F9F9F8] dark:bg-[#09090B] hover:bg-black/[0.025] dark:hover:bg-white/[0.035]"
@@ -864,7 +864,7 @@ export default function ChatPage() {
         )}
 
         {/* ── Input Area with Exposed 1px Top Border ──────────────── */}
-        <div className="border-t border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md pt-3 pb-4">
+        <div className="border-t border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md pt-2 sm:pt-3 pb-2 sm:pb-4">
           <ChatInput
             value={inputDraft}
             onChange={setInputDraft}

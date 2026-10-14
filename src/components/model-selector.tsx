@@ -135,7 +135,13 @@ export default function ModelSelector({ selectedModel, onModelChange, t }: Model
       </button>
 
       {isOpen && (
-        <div className={styles.dropdown}>
+        <>
+          <div
+            className={styles.backdrop}
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className={styles.dropdown}>
           {/* Search box */}
           <div className={styles.searchWrapper}>
             <input
@@ -218,6 +224,7 @@ export default function ModelSelector({ selectedModel, onModelChange, t }: Model
             ))
           )}
         </div>
+        </>
       )}
     </div>
   );
