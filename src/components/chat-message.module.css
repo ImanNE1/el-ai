@@ -621,36 +621,132 @@
   margin-top: 2px;
 }
 
-.docExportBtn {
+.docExportIconExcel {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.docExportButtonsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.docExportBtnDocx {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 7px 13px;
+  border-radius: 9px;
   border: none;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.docExportBtn:hover:not(:disabled) {
+.docExportBtnDocx:hover:not(:disabled) {
   transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.5);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
   background: linear-gradient(135deg, #3b82f6, #2563eb);
 }
 
-.docExportBtn:active:not(:disabled) {
+.docExportBtnDocx:active:not(:disabled) {
   transform: scale(0.97);
 }
 
-.docExportBtn:disabled {
+.docExportBtnDocx:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.docExportBtnPdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 9px;
+  border: none;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.docExportBtnPdf:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.docExportBtnPdf:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.docExportBtnPdf:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.docExportBtnExcel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 9px;
+  border: none;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.docExportBtnExcel:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.5);
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.docExportBtnExcel:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.docExportBtnExcel:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.continueBtn {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.28);
+  font-weight: 500;
+}
+
+.continueBtn:hover {
+  color: #ffffff;
+  background: rgba(56, 189, 248, 0.25);
+  border-color: rgba(56, 189, 248, 0.55);
 }
 
 .docMiniSpinner {
@@ -678,10 +774,21 @@
     gap: 10px;
   }
 
-  .docExportBtn {
+  .docExportButtonsRow {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .docExportBtnDocx,
+  .docExportBtnPdf,
+  .docExportBtnExcel {
+    flex: 1;
+    min-width: 80px;
     justify-content: center;
   }
 }
+
 
 

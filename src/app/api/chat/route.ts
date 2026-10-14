@@ -89,20 +89,53 @@ export async function POST(request: NextRequest) {
       ? body.temperature
       : 0.7;
 
-    const upstream = await fetch(`${apiBase}/chat/completions`, {
+    const requestedModel = body.model || "ag/gemini-3.8-flash-high";
+    // Maximize completion tokens so long code, documents, and explanations are never truncated
+    const maxTokens = typeof body.max_tokens === "number" && body.max_tokens > 0
+      ? body.max_tokens
+      : requestedModel.includes("gpt-3.5")
+      ? 4096
+      : (requestedModel.includes("gpt-4o") || requestedModel.includes("gpt-4.1"))
+      ? 16384
+      : requestedModel.includes("claude")
+      ? 32768
+      : 65536;
+
+    let upstream = await fetch(`${apiBase}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: body.model || "ag/gemini-3.8-flash-high",
+        model: requestedModel,
         messages,
         stream: true,
         temperature,
-        max_tokens: 8192,
+        max_tokens: maxTokens,
       }),
     });
+
+    // If upstream rejected because max_tokens exceeded model maximum, retry without max_tokens
+    if (upstream.status === 400) {
+      const peekError = await upstream.clone().text().catch(() => "");
+      if (peekError.toLowerCase().includes("max_tokens") || peekError.toLowerCase().includes("token")) {
+        console.warn(`Upstream 400 on max_tokens (${maxTokens}), retrying without max_tokens constraint...`);
+        upstream = await fetch(`${apiBase}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: requestedModel,
+            messages,
+            stream: true,
+            temperature,
+          }),
+        });
+      }
+    }
 
     if (!upstream.ok) {
       const rawError = await upstream.text().catch(() => "Unknown upstream error");

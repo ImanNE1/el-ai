@@ -12,11 +12,14 @@
     "@types/pdf-parse": "^1.1.5",
     "@vercel/analytics": "^2.0.1",
     "docx": "^9.10.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "mammoth": "^1.13.0",
     "next": "16.4.0",
     "pdf-parse": "^2.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "unpdf": "^1.8.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

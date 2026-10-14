@@ -509,6 +509,7 @@ export default function ChatPage() {
                   isStreaming={isStreaming && isLastAssistant}
                   isLastAssistant={isLastAssistant}
                   onRegenerate={() => regenerateLast(selectedModel)}
+                  onContinue={() => handleSend(t.chat?.continuePrompt || "Lanjutkan dari bagian yang terpotong secara lengkap dan tuntas sampai selesai.")}
                   t={t.chat}
                 />
               );

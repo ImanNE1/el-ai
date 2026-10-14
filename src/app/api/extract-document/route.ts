@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PDFParse } from "pdf-parse";
+import { extractText, getDocumentProxy } from "unpdf";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
@@ -37,11 +37,10 @@ export async function POST(request: NextRequest) {
     if (extension === "pdf") {
       docType = "pdf";
       try {
-        const parser = new PDFParse({ data: new Uint8Array(arrayBuffer) });
-        const textResult = await parser.getText();
-        extractedText = textResult.text || "";
-        pageCount = textResult.total;
-        await parser.destroy();
+        const pdf = await getDocumentProxy(new Uint8Array(arrayBuffer));
+        const { text, totalPages } = await extractText(pdf, { mergePages: true });
+        extractedText = text || "";
+        pageCount = totalPages;
       } catch (pdfErr) {
         console.error("PDF parse error:", pdfErr);
         return NextResponse.json(

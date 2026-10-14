@@ -10,12 +10,15 @@ import type { ChatMessage as ChatMessageType } from "@/hooks/use-chat";
 import type { TranslationDictionary } from "@/i18n/translations";
 import Markdown from "./markdown";
 import { downloadDocx, isDocumentLike, extractDocumentTitle } from "@/lib/docx-generator";
+import { downloadPdf } from "@/lib/pdf-generator";
+import { downloadExcel, hasTabularData } from "@/lib/excel-generator";
 import styles from "./chat-message.module.css";
 
 interface ChatMessageProps {
   message: ChatMessageType;
   isStreaming?: boolean;
   onRegenerate?: () => void;
+  onContinue?: () => void;
   isLastAssistant?: boolean;
   t?: TranslationDictionary["chat"];
 }
@@ -82,6 +85,7 @@ function ChatMessage({
   message,
   isStreaming,
   onRegenerate,
+  onContinue,
   isLastAssistant,
   t,
 }: ChatMessageProps) {
@@ -90,6 +94,8 @@ function ChatMessage({
   const [copied, setCopied] = useState(false);
 
   const [isDownloadingDocx, setIsDownloadingDocx] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [isDownloadingExcel, setIsDownloadingExcel] = useState(false);
 
   const handleCopyMessage = async () => {
     try {
@@ -115,7 +121,37 @@ function ChatMessage({
     }
   };
 
+  const handleDownloadPdf = async () => {
+    if (isDownloadingPdf || !message.content) return;
+    setIsDownloadingPdf(true);
+    try {
+      const docTitle = extractDocumentTitle(message.content);
+      await downloadPdf(message.content, `${docTitle}.pdf`);
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      alert("Terjadi kesalahan saat memformat file PDF. Silakan coba kembali.");
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handleDownloadExcel = async () => {
+    if (isDownloadingExcel || !message.content) return;
+    setIsDownloadingExcel(true);
+    try {
+      const docTitle = extractDocumentTitle(message.content);
+      await downloadExcel(message.content, `${docTitle}.xlsx`);
+    } catch (err) {
+      console.error("Failed to generate Excel:", err);
+      alert("Terjadi kesalahan saat memformat spreadsheet Excel. Silakan coba kembali.");
+    } finally {
+      setIsDownloadingExcel(false);
+    }
+  };
+
   const hasReasoning = Boolean(message.reasoning && message.reasoning.trim().length > 0);
+  const isDoc = !isUser && Boolean(message.content && isDocumentLike(message.content));
+  const hasTables = !isUser && Boolean(message.content && hasTabularData(message.content));
 
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
@@ -244,48 +280,119 @@ function ChatMessage({
               {message.content ? (
                 <>
                   <Markdown content={message.content} />
-                  {!isStreaming && isDocumentLike(message.content) && (
+                  {!isStreaming && (isDoc || hasTables) && (
                     <div className={styles.docExportCard}>
                       <div className={styles.docExportLeft}>
-                        <div className={styles.docExportIcon}>
-                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="8" y1="13" x2="16" y2="13" />
-                            <line x1="8" y1="17" x2="16" y2="17" />
-                          </svg>
+                        <div className={hasTables && !isDoc ? styles.docExportIconExcel : styles.docExportIcon}>
+                          {hasTables && !isDoc ? (
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="3" width="18" height="18" rx="2" />
+                              <line x1="3" y1="9" x2="21" y2="9" />
+                              <line x1="3" y1="15" x2="21" y2="15" />
+                              <line x1="9" y1="3" x2="9" y2="21" />
+                              <line x1="15" y1="3" x2="15" y2="21" />
+                            </svg>
+                          ) : (
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                              <polyline points="14 2 14 8 20 8" />
+                              <line x1="8" y1="13" x2="16" y2="13" />
+                              <line x1="8" y1="17" x2="16" y2="17" />
+                            </svg>
+                          )}
                         </div>
                         <div className={styles.docExportInfo}>
                           <span className={styles.docExportTitle}>
                             {extractDocumentTitle(message.content)}
                           </span>
                           <span className={styles.docExportSubtitle}>
-                            {t?.downloadDocxSubtitle || "Diformat rapi dengan judul, tabel & daftar"}
+                            {hasTables && !isDoc
+                              ? "Data tabel siap diekspor ke spreadsheet Excel atau dokumen"
+                              : (t?.downloadDocxSubtitle || "Diformat rapi dengan judul, tabel & daftar")}
                           </span>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className={styles.docExportBtn}
-                        onClick={handleDownloadDocx}
-                        disabled={isDownloadingDocx}
-                      >
-                        {isDownloadingDocx ? (
-                          <>
-                            <div className={styles.docMiniSpinner} />
-                            <span>{t?.docxDownloading || "Menyiapkan..."}</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                              <polyline points="7 10 12 15 17 10" />
-                              <line x1="12" y1="15" x2="12" y2="3" />
-                            </svg>
-                            <span>{t?.downloadDocx || "Unduh .docx"}</span>
-                          </>
+
+                      <div className={styles.docExportButtonsRow}>
+                        {/* Download Word (.docx) */}
+                        <button
+                          type="button"
+                          className={styles.docExportBtnDocx}
+                          onClick={handleDownloadDocx}
+                          disabled={isDownloadingDocx}
+                          title="Unduh Microsoft Word (.docx)"
+                        >
+                          {isDownloadingDocx ? (
+                            <>
+                              <div className={styles.docMiniSpinner} />
+                              <span>{t?.docxDownloading || "Menyiapkan..."}</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <path d="M12 18v-6" />
+                                <path d="m9 15 3 3 3-3" />
+                              </svg>
+                              <span>.docx</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* Download PDF (.pdf) */}
+                        <button
+                          type="button"
+                          className={styles.docExportBtnPdf}
+                          onClick={handleDownloadPdf}
+                          disabled={isDownloadingPdf}
+                          title="Unduh Adobe PDF (.pdf)"
+                        >
+                          {isDownloadingPdf ? (
+                            <>
+                              <div className={styles.docMiniSpinner} />
+                              <span>{t?.pdfDownloading || "Menyiapkan..."}</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <path d="M12 18v-6" />
+                                <path d="m9 15 3 3 3-3" />
+                              </svg>
+                              <span>.pdf</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* Download Excel (.xlsx) if tabular data exists */}
+                        {hasTables && (
+                          <button
+                            type="button"
+                            className={styles.docExportBtnExcel}
+                            onClick={handleDownloadExcel}
+                            disabled={isDownloadingExcel}
+                            title="Unduh Microsoft Excel (.xlsx)"
+                          >
+                            {isDownloadingExcel ? (
+                              <>
+                                <div className={styles.docMiniSpinner} />
+                                <span>{t?.excelDownloading || "Menyiapkan..."}</span>
+                              </>
+                            ) : (
+                              <>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                                  <line x1="9" y1="3" x2="9" y2="21" />
+                                  <line x1="3" y1="9" x2="21" y2="9" />
+                                </svg>
+                                <span>.xlsx</span>
+                              </>
+                            )}
+                          </button>
                         )}
-                      </button>
+                      </div>
                     </div>
                   )}
                 </>
@@ -325,6 +432,7 @@ function ChatMessage({
                     )}
                   </button>
 
+                  {/* Word (.docx) action button */}
                   <button
                     className={styles.actionBtn}
                     onClick={handleDownloadDocx}
@@ -339,7 +447,7 @@ function ChatMessage({
                       </>
                     ) : (
                       <>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                           <polyline points="14 2 14 8 20 8" />
                           <path d="M12 18v-6" />
@@ -349,6 +457,75 @@ function ChatMessage({
                       </>
                     )}
                   </button>
+
+                  {/* PDF action button */}
+                  <button
+                    className={styles.actionBtn}
+                    onClick={handleDownloadPdf}
+                    type="button"
+                    disabled={isDownloadingPdf}
+                    title={t?.downloadPdf || "Unduh dokumen PDF (.pdf)"}
+                  >
+                    {isDownloadingPdf ? (
+                      <>
+                        <div className={styles.docActionMiniSpinner} />
+                        <span>{t?.pdfDownloading || "Menyiapkan..."}</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <path d="M12 18v-6" />
+                          <path d="m9 15 3 3 3-3" />
+                        </svg>
+                        <span>{t?.downloadPdf || "Unduh .pdf"}</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Excel action button (if tabular data exists) */}
+                  {hasTables && (
+                    <button
+                      className={styles.actionBtn}
+                      onClick={handleDownloadExcel}
+                      type="button"
+                      disabled={isDownloadingExcel}
+                      title={t?.downloadExcel || "Unduh spreadsheet Excel (.xlsx)"}
+                    >
+                      {isDownloadingExcel ? (
+                        <>
+                          <div className={styles.docActionMiniSpinner} />
+                          <span>{t?.excelDownloading || "Menyiapkan..."}</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                          </svg>
+                          <span>{t?.downloadExcel || "Unduh .xlsx"}</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Continue generation button (if cut off) */}
+                  {isLastAssistant && onContinue && (
+                    <button
+                      className={`${styles.actionBtn} ${styles.continueBtn}`}
+                      onClick={onContinue}
+                      type="button"
+                      title={t?.continueResponse || "Lanjutkan respon yang terpotong"}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                        <line x1="19" y1="5" x2="19" y2="19" />
+                      </svg>
+                      <span>{t?.continueResponse || "Lanjutkan"}</span>
+                    </button>
+                  )}
 
                   {isLastAssistant && onRegenerate && (
                     <button

@@ -94,6 +94,12 @@ export interface TranslationDictionary {
     docxDownloading: string;
     documentReadyDocx: string;
     downloadDocxSubtitle: string;
+    downloadPdf: string;
+    pdfDownloading: string;
+    downloadExcel: string;
+    excelDownloading: string;
+    continueResponse: string;
+    continuePrompt: string;
   };
   modelSelector: {
     selectModel: string;
@@ -247,6 +253,12 @@ export const translations: Record<Language, TranslationDictionary> = {
       docxDownloading: "Menyiapkan .docx...",
       documentReadyDocx: "Dokumen Word (.docx) Siap Diunduh",
       downloadDocxSubtitle: "Diformat rapi dengan judul, tabel & daftar",
+      downloadPdf: "Unduh .pdf",
+      pdfDownloading: "Menyiapkan .pdf...",
+      downloadExcel: "Unduh .xlsx",
+      excelDownloading: "Menyiapkan .xlsx...",
+      continueResponse: "Lanjutkan",
+      continuePrompt: "Lanjutkan dari bagian yang terpotong secara lengkap dan tuntas sampai selesai.",
     },
     modelSelector: {
       selectModel: "Pilih Model",
@@ -430,6 +442,12 @@ export const translations: Record<Language, TranslationDictionary> = {
       docxDownloading: "Preparing .docx...",
       documentReadyDocx: "Word Document (.docx) Ready",
       downloadDocxSubtitle: "Formatted with headings, tables & lists",
+      downloadPdf: "Download .pdf",
+      pdfDownloading: "Preparing .pdf...",
+      downloadExcel: "Download .xlsx",
+      excelDownloading: "Preparing .xlsx...",
+      continueResponse: "Continue",
+      continuePrompt: "Continue from where it was cut off completely until the end.",
     },
     modelSelector: {
       selectModel: "Select Model",

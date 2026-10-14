@@ -14,6 +14,7 @@ import {
   getImagesFromDrop,
   MAX_IMAGE_COUNT,
 } from "@/lib/image-utils";
+import { extractDocumentFile } from "@/lib/document-parser";
 import styles from "./chat-input.module.css";
 
 interface ChatInputProps {
@@ -183,33 +184,27 @@ export default function ChatInput({
     for (const file of toProcess) {
       setProcessingStatus(`Mengekstrak ${file.name}...`);
       try {
-        const formData = new FormData();
-        formData.append("file", file);
+        const result = await extractDocumentFile(file);
 
-        const res = await fetch("/api/extract-document", {
-          method: "POST",
-          body: formData,
-        });
-
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          alert(data.error || `Gagal membaca dokumen ${file.name}`);
+        if (!result.success || !result.text) {
+          alert(result.error || `Gagal membaca isi dokumen ${file.name}. Pastikan file tidak rusak atau terkunci.`);
           continue;
         }
 
         const newDoc: AttachedDoc = {
-          name: data.name,
-          size: data.size,
-          type: data.type,
-          pageCount: data.pageCount,
-          sheetCount: data.sheetCount,
-          extractedText: data.text,
+          name: result.name,
+          size: result.size,
+          type: result.type,
+          pageCount: result.pageCount,
+          sheetCount: result.sheetCount,
+          extractedText: result.text,
         };
 
         setAttachedDocs((prev) => [...prev, newDoc]);
       } catch (err: unknown) {
         console.error("Document upload error:", err);
-        alert(`Gagal mengunggah file ${file.name}`);
+        const errorMsg = err instanceof Error ? err.message : `Gagal mengunggah file ${file.name}`;
+        alert(errorMsg);
       }
     }
   }, [attachedDocs.length]);
