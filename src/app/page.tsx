@@ -56,7 +56,6 @@ export default function ChatPage() {
   const [selectedGemId, setSelectedGemId] = useState<string | null>(null);
   const [gemWarning, setGemWarning] = useState<boolean>(false);
   const [inputDraft, setInputDraft] = useState<string>("");
-  const [timeUtc, setTimeUtc] = useState<string>("07:15:00 UTC");
 
   // Settings & Gem Skills Hook
   const {
@@ -116,16 +115,6 @@ export default function ChatPage() {
   const currentSessionIdRef = useRef<string>("");
   const shouldAutoScrollRef = useRef(true);
 
-  // Update real UTC clock
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeUtc(now.toTimeString().split(" ")[0] + " UTC");
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Sync active session messages and restore session's gem
   useEffect(() => {
@@ -604,23 +593,6 @@ export default function ChatPage() {
             <div className="flex items-baseline gap-2">
               <span className="font-semibold text-base tracking-tighter">
                 {t.common.appName}
-              </span>
-              <span className="hidden sm:inline-block font-mono text-[10px] tracking-widest text-[#666666] dark:text-[#A1A1AA] uppercase">
-                [GATEWAY:ONLINE]
-              </span>
-            </div>
-
-            {/* Live Status Beacon */}
-            <div className="hidden md:flex items-center gap-2 pl-3 border-l border-[#E5E5E0] dark:border-[#27272A]">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]"></span>
-              </span>
-              <span className="font-mono text-[10px] uppercase text-[#10B981] tracking-tight">
-                Operational · 14ms
-              </span>
-              <span className="font-mono text-[10px] text-[#666666] dark:text-[#A1A1AA] tabular-nums pl-1">
-                · {timeUtc}
               </span>
             </div>
           </div>
