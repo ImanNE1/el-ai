@@ -1,14 +1,11 @@
 /**
- * Main Chat Page — EL
- * Features:
- * - Persistent Conversation History (Sidebar with sessions, rename, delete)
- * - Multi-model gateway with verified Antigravity models (ag/)
- * - Mandatory Gem Skill selection before initial / new chat starts
- * - General purpose AI assistant & specialized skill personas
- * - Markdown rendering with syntax highlighting & one-click copy
- * - Live streaming with reasoning / thought process
- * - Chat export (Markdown download)
- * - Clean anti-slop design with rich aesthetics
+ * Main Chat Application — EL
+ * Redesigned with Swiss Editorial Design & Linear/Vercel Aesthetics:
+ * - High-Contrast Minimalist (Warm Off-White #F9F9F8 / Deep Zinc #09090B)
+ * - Exposed Architectural Grid (Crisp 1px hairline borders, no heavy shadows)
+ * - Geist Sans & Geist Mono typography with tabular figures
+ * - Semantic Accents: Emerald (Active/Scale), Amber (Notice/Thinking), Rose (Stop/Error)
+ * - Directional micro-links (arrow shifts 4px on hover)
  */
 "use client";
 
@@ -21,7 +18,25 @@ import ChatInput from "@/components/chat-input";
 import ModelSelector from "@/components/model-selector";
 import ChatSidebar from "@/components/chat-sidebar";
 import SettingsModal from "@/components/settings-modal";
-import styles from "./page.module.css";
+import {
+  Sparkles,
+  Heart,
+  Code2,
+  PenTool,
+  GraduationCap,
+  Lightbulb,
+  Plus,
+  Globe,
+  Sun,
+  Moon,
+  Settings as SettingsIcon,
+  Activity,
+  AlertTriangle,
+  ArrowRight,
+  Terminal,
+  Layers,
+  ChevronRight,
+} from "lucide-react";
 
 export default function ChatPage() {
   const [selectedModel, setSelectedModel] = useState("ag/gemini-3.8-flash-high");
@@ -32,8 +47,9 @@ export default function ChatPage() {
   const [selectedGemId, setSelectedGemId] = useState<string | null>(null);
   const [gemWarning, setGemWarning] = useState<boolean>(false);
   const [inputDraft, setInputDraft] = useState<string>("");
+  const [timeUtc, setTimeUtc] = useState<string>("07:15:00 UTC");
 
-  // Settings & Gem Skills Hook (Dark mode & Bahasa Indonesia default)
+  // Settings & Gem Skills Hook
   const {
     settings,
     allGems,
@@ -61,6 +77,8 @@ export default function ChatPage() {
     renameSession,
     clearAllSessions,
     saveSessionMessages,
+    updateSessionGem,
+    updateSessionModel,
   } = useChatSessions(selectedModel);
 
   // Chat hook
@@ -86,7 +104,19 @@ export default function ChatPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesAreaRef = useRef<HTMLDivElement>(null);
-  const currentSessionIdRef = useRef(activeSessionId);
+  const currentSessionIdRef = useRef<string>("");
+  const shouldAutoScrollRef = useRef(true);
+
+  // Update real UTC clock
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTimeUtc(now.toTimeString().split(" ")[0] + " UTC");
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Sync active session messages and restore session's gem
   useEffect(() => {
@@ -111,22 +141,7 @@ export default function ChatPage() {
     }
   }, [activeSession, isLoaded, loadMessages, setActiveGemId]);
 
-  // Initial load
-  useEffect(() => {
-    if (isLoaded && activeSession && messages.length === 0 && activeSession.messages.length > 0) {
-      loadMessages(activeSession.messages);
-      if (activeSession.gemId) {
-        setSelectedGemId(activeSession.gemId);
-        setActiveGemId(activeSession.gemId);
-      } else {
-        setSelectedGemId("general");
-      }
-    }
-  }, [isLoaded, activeSession, messages.length, loadMessages, setActiveGemId]);
-
-  const shouldAutoScrollRef = useRef(true);
-
-  // Auto-scroll to bottom safely without animation collisions
+  // Auto-scroll to bottom safely
   useEffect(() => {
     const container = messagesAreaRef.current;
     if (!container || !shouldAutoScrollRef.current) return;
@@ -138,7 +153,6 @@ export default function ChatPage() {
     }
   }, [messages, isStreaming]);
 
-  // Handle user scroll detection
   const handleScroll = useCallback(() => {
     const container = messagesAreaRef.current;
     if (!container) return;
@@ -146,7 +160,7 @@ export default function ChatPage() {
     shouldAutoScrollRef.current = distanceToBottom < 100;
   }, []);
 
-  // Auto collapse sidebar on small mobile screens
+  // Auto collapse sidebar on small screens
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 900) {
       setSidebarOpen(false);
@@ -156,20 +170,22 @@ export default function ChatPage() {
   const hasMessages = messages.length > 0;
 
   // Select Gem for this chat session
-  const handleSelectGem = useCallback((gemId: string) => {
-    setSelectedGemId(gemId);
-    setGemWarning(false);
-    const actualGemId = gemId === "general" ? null : gemId;
-    setActiveGemId(actualGemId);
-    if (activeSessionId) {
-      saveSessionMessages(activeSessionId, messages, selectedModel, actualGemId);
-    }
-  }, [activeSessionId, messages, selectedModel, setActiveGemId, saveSessionMessages]);
+  const handleSelectGem = useCallback(
+    (gemId: string) => {
+      setSelectedGemId(gemId);
+      setGemWarning(false);
+      const actualGemId = gemId === "general" ? null : gemId;
+      setActiveGemId(actualGemId);
+      if (activeSessionId) {
+        updateSessionGem(activeSessionId, actualGemId);
+      }
+    },
+    [activeSessionId, setActiveGemId, updateSessionGem]
+  );
 
   // Handle send message with Gem Skill requirement validation
   const handleSend = useCallback(
     (text: string, images?: string[], documents?: AttachedDoc[]) => {
-      // If fresh/empty chat and no Gem has been picked yet, require user to choose one
       if (!hasMessages && !selectedGemId) {
         setGemWarning(true);
         if (messagesAreaRef.current) {
@@ -190,11 +206,11 @@ export default function ChatPage() {
     [hasMessages, selectedGemId, activeGem, setActiveGemId, sendMessage, selectedModel, getComputedSystemPrompt]
   );
 
-  // Start new conversation — resets Gem selection so user is asked to choose for new chat
+  // Start new conversation
   const handleNewChat = useCallback(() => {
     const fresh = createNewSession(selectedModel, null);
     currentSessionIdRef.current = fresh.id;
-    loadMessages([]);
+    clearMessages();
     setSelectedGemId(null);
     setActiveGemId(null);
     setInputDraft("");
@@ -202,7 +218,7 @@ export default function ChatPage() {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setSidebarOpen(false);
     }
-  }, [createNewSession, selectedModel, loadMessages, setActiveGemId]);
+  }, [createNewSession, selectedModel, clearMessages, setActiveGemId]);
 
   // Switch session from history
   const handleSelectSession = useCallback(
@@ -210,125 +226,92 @@ export default function ChatPage() {
       if (typeof window !== "undefined" && window.innerWidth < 768) {
         setSidebarOpen(false);
       }
-      if (sessionId === activeSessionId) return;
-      switchSession(sessionId);
       const target = sessions.find((s) => s.id === sessionId);
-      if (target) {
-        currentSessionIdRef.current = sessionId;
-        loadMessages(target.messages || []);
-        if (target.model) setSelectedModel(target.model);
-        if (target.gemId !== undefined && target.gemId !== null) {
-          setActiveGemId(target.gemId);
-          setSelectedGemId(target.gemId);
-        } else {
-          setSelectedGemId((target.messages && target.messages.length > 0) ? "general" : null);
-          setActiveGemId(null);
-        }
-        setGemWarning(false);
+      if (!target) return;
+
+      switchSession(sessionId);
+      currentSessionIdRef.current = sessionId;
+      loadMessages(target.messages || []);
+      if (target.model) {
+        setSelectedModel(target.model);
       }
+      if (target.gemId !== undefined && target.gemId !== null) {
+        setActiveGemId(target.gemId);
+        setSelectedGemId(target.gemId);
+      } else if (target.messages && target.messages.length > 0) {
+        setSelectedGemId("general");
+        setActiveGemId(null);
+      } else {
+        setSelectedGemId(null);
+        setActiveGemId(null);
+      }
+      setGemWarning(false);
     },
-    [activeSessionId, switchSession, sessions, loadMessages, setActiveGemId]
+    [switchSession, sessions, loadMessages, setActiveGemId]
   );
 
-  // List of all Gem options to display on empty chat
-  const gemOptions = useMemo(() => [
-    {
-      id: "general",
-      name: t.welcome.generalName,
-      description: t.welcome.generalDesc,
-      color: "#06b6d4",
-      gradient: "linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(14, 165, 233, 0.06))",
-      borderColor: "rgba(6, 182, 212, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      ),
-    },
-    {
-      id: "psychologist-counselor",
-      name: t.builtInGems.psychologistCounselor.name,
-      description: t.builtInGems.psychologistCounselor.description,
-      color: "#f43f5e",
-      gradient: "linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.06))",
-      borderColor: "rgba(244, 63, 94, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-          <path d="M12 5v4" />
-          <path d="M10 7h4" />
-        </svg>
-      ),
-    },
-    {
-      id: "code-architect",
-      name: t.builtInGems.codeArchitect.name,
-      description: t.builtInGems.codeArchitect.description,
-      color: "#3b82f6",
-      gradient: "linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(37, 99, 235, 0.06))",
-      borderColor: "rgba(59, 130, 246, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="16 18 22 12 16 6" />
-          <polyline points="8 6 2 12 8 18" />
-        </svg>
-      ),
-    },
-    {
-      id: "writing-editor",
-      name: t.builtInGems.writingEditor.name,
-      description: t.builtInGems.writingEditor.description,
-      color: "#f59e0b",
-      gradient: "linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.06))",
-      borderColor: "rgba(245, 158, 11, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 20h9" />
-          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-        </svg>
-      ),
-    },
-    {
-      id: "learning-coach",
-      name: t.builtInGems.learningCoach.name,
-      description: t.builtInGems.learningCoach.description,
-      color: "#10b981",
-      gradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.06))",
-      borderColor: "rgba(16, 185, 129, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-          <path d="M6 12v5c3 3 9 3 12 0v-5" />
-        </svg>
-      ),
-    },
-    {
-      id: "creative-brainstormer",
-      name: t.builtInGems.creativeBrainstormer.name,
-      description: t.builtInGems.creativeBrainstormer.description,
-      color: "#a855f7",
-      gradient: "linear-gradient(135deg, rgba(168, 85, 247, 0.22), rgba(147, 51, 234, 0.06))",
-      borderColor: "rgba(168, 85, 247, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-        </svg>
-      ),
-    },
-    ...settings.customGems.map((cg) => ({
-      id: cg.id,
-      name: cg.name,
-      description: cg.description,
-      color: "#8b5cf6",
-      gradient: "linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(124, 58, 237, 0.06))",
-      borderColor: "rgba(139, 92, 246, 0.45)",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 3h12l4 6-10 12L2 9z" />
-        </svg>
-      ),
-    })),
-  ], [t, settings.customGems]);
+  // List of all Gem options with monospace indices
+  const gemOptions = useMemo(
+    () => [
+      {
+        id: "general",
+        index: "01",
+        name: t.welcome.generalName,
+        description: t.welcome.generalDesc,
+        statusLabel: "SCALE / ACTIVE",
+        icon: <Sparkles className="w-4 h-4 text-[#10B981]" />,
+      },
+      {
+        id: "psychologist-counselor",
+        index: "02",
+        name: t.builtInGems.psychologistCounselor.name,
+        description: t.builtInGems.psychologistCounselor.description,
+        statusLabel: "EMPATHIC / VERIFIED",
+        icon: <Heart className="w-4 h-4 text-[#F43F5E]" />,
+      },
+      {
+        id: "code-architect",
+        index: "03",
+        name: t.builtInGems.codeArchitect.name,
+        description: t.builtInGems.codeArchitect.description,
+        statusLabel: "SYSTEMS / HIGH",
+        icon: <Code2 className="w-4 h-4 text-[#10B981]" />,
+      },
+      {
+        id: "writing-editor",
+        index: "04",
+        name: t.builtInGems.writingEditor.name,
+        description: t.builtInGems.writingEditor.description,
+        statusLabel: "SWISS EDITORIAL",
+        icon: <PenTool className="w-4 h-4 text-[#F59E0B]" />,
+      },
+      {
+        id: "learning-coach",
+        index: "05",
+        name: t.builtInGems.learningCoach.name,
+        description: t.builtInGems.learningCoach.description,
+        statusLabel: "SOCRATIC / ACTIVE",
+        icon: <GraduationCap className="w-4 h-4 text-[#10B981]" />,
+      },
+      {
+        id: "creative-brainstormer",
+        index: "06",
+        name: t.builtInGems.creativeBrainstormer.name,
+        description: t.builtInGems.creativeBrainstormer.description,
+        statusLabel: "DIVERGENT",
+        icon: <Lightbulb className="w-4 h-4 text-[#F59E0B]" />,
+      },
+      ...settings.customGems.map((cg, cIdx) => ({
+        id: cg.id,
+        index: `0${7 + cIdx}`,
+        name: cg.name,
+        description: cg.description,
+        statusLabel: "CUSTOM VECTOR",
+        icon: <Layers className="w-4 h-4 text-[#10B981]" />,
+      })),
+    ],
+    [t, settings.customGems]
+  );
 
   // Suggested starter prompts based on active chosen Gem
   const activePrompts = useMemo(() => {
@@ -352,6 +335,7 @@ export default function ChatPage() {
       }
     }, 40);
   }, []);
+
   const currentInputPlaceholder = useMemo(() => {
     if (hasMessages) {
       return t.chat.inputPlaceholder;
@@ -365,8 +349,8 @@ export default function ChatPage() {
   }, [hasMessages, selectedGemId, gemOptions, t]);
 
   return (
-    <div className={styles.appWrapper}>
-      {/* ── Conversation History Sidebar ────────────────────── */}
+    <div className="flex fixed inset-0 w-full h-full h-dvh overflow-hidden bg-[#F9F9F8] dark:bg-[#09090B] text-[#111111] dark:text-[#FAFAFA] font-sans antialiased">
+      {/* ── Conversation History Sidebar with Exposed 1px Right Border ─ */}
       <ChatSidebar
         sessions={sessions}
         activeSessionId={activeSessionId}
@@ -380,128 +364,130 @@ export default function ChatPage() {
         t={t.sidebar}
       />
 
-      {/* ── Main Chat Area ──────────────────────────────────── */}
-      <main className={styles.mainContent}>
-        {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.headerLeft}>
+      {/* ── Main Chat Area ────────────────────────────────────────── */}
+      <main className="flex-1 flex flex-col w-full h-full h-dvh min-h-0 min-w-0 relative overflow-hidden bg-[#F9F9F8] dark:bg-[#09090B]">
+        {/* Minimalist Sticky Header with Exposed 1px Bottom Border */}
+        <header className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 h-14 border-b border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md flex-shrink-0">
+          <div className="flex items-center gap-3.5">
+            {/* Sidebar Toggle */}
             <button
-              className={`${styles.sidebarToggle} ${sidebarOpen ? styles.sidebarToggleActive : ""}`}
+              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
               onClick={() => setSidebarOpen(!sidebarOpen)}
               title={sidebarOpen ? t.sidebar.closeSidebar : t.sidebar.openSidebar}
-              aria-label={sidebarOpen ? t.sidebar.closeSidebar : t.sidebar.openSidebar}
+              type="button"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                 <line x1="9" y1="3" x2="9" y2="21" />
               </svg>
             </button>
 
-            <div className={styles.logo}>
-              <img
-                src="/logo-icon.png"
-                alt="EL.AI"
-                className={styles.logoImg}
-              />
+            {/* Wordmark */}
+            <div className="flex items-baseline gap-2">
+              <span className="font-semibold text-base tracking-tighter">
+                {t.common.appName}
+              </span>
+              <span className="hidden sm:inline-block font-mono text-[10px] tracking-widest text-[#666666] dark:text-[#A1A1AA] uppercase">
+                [GATEWAY:ONLINE]
+              </span>
             </div>
 
-            <div>
-              <h1 className={styles.headerTitle}>
-                <span>{t.common.appName}</span>
-                <span className={styles.statusIndicator} title={t.common.gatewayConnected}></span>
-              </h1>
-              <p className={styles.headerSubtitle}>{t.common.gatewaySubtitle}</p>
+            {/* Live Status Beacon */}
+            <div className="hidden md:flex items-center gap-2 pl-3 border-l border-[#E5E5E0] dark:border-[#27272A]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]"></span>
+              </span>
+              <span className="font-mono text-[10px] uppercase text-[#10B981] tracking-tight">
+                Operational · 14ms
+              </span>
+              <span className="font-mono text-[10px] text-[#666666] dark:text-[#A1A1AA] tabular-nums pl-1">
+                · {timeUtc}
+              </span>
             </div>
           </div>
 
-          <div className={styles.headerRight}>
-            {/* Active Gem Skill indicator */}
+          {/* Header Controls Right Cluster */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Active Gem Skill Pill */}
             {activeGem && (
               <button
                 type="button"
-                className={styles.activeGemBadge}
+                className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981] font-mono text-[11px] uppercase tracking-wider"
                 onClick={() => setSettingsOpen(true)}
-                title={`${t.settings.gemsTitle}: ${activeGem.name} — ${t.settings.title}`}
+                title={`${t.settings.gemsTitle}: ${activeGem.name}`}
               >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 <span>{activeGem.name}</span>
               </button>
             )}
 
+            {/* + New Session CTA */}
             <button
-              className={styles.newChatHeaderBtn}
+              className="group hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-medium border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
               onClick={handleNewChat}
               title={t.common.newChat}
               type="button"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <Plus className="w-3.5 h-3.5" />
               <span>{t.common.newChat}</span>
+              <span className="arrow-shift">→</span>
             </button>
 
-            {/* Model selector */}
+            {/* Model Selector */}
             <ModelSelector
               selectedModel={selectedModel}
               onModelChange={(modelId) => {
                 setSelectedModel(modelId);
                 if (activeSessionId) {
-                  const currentGem = selectedGemId === "general" ? null : selectedGemId;
-                  saveSessionMessages(activeSessionId, messages, modelId, currentGem);
+                  updateSessionModel(activeSessionId, modelId);
                 }
               }}
               t={t.modelSelector}
             />
 
-            {/* Quick Theme Toggle (Light default / Dark) */}
+            {/* Language Toggle ID / EN */}
             <button
+              onClick={() => setLanguage(settings.language === "en" ? "id" : "en")}
               type="button"
-              className={styles.iconBtn}
-              onClick={toggleTheme}
-              title={settings.theme === "dark" ? (settings.language === "id" ? "Beralih ke Mode Gelap" : "Switch to Dark Mode") : (settings.language === "id" ? "Beralih ke Mode Terang (Bawaan)" : "Switch to Light Mode (Default)")}
-              aria-label="Toggle visual theme"
+              className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-mono font-medium border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded"
+              title="Toggle Language (ID / EN)"
             >
-              {settings.theme === "dark" ? (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              ) : (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-              )}
+              <Globe className="w-3.5 h-3.5 opacity-70" />
+              <span>{settings.language.toUpperCase()}</span>
             </button>
 
-            {/* Settings & Gem Skills Menu */}
+            {/* Dark / Light Toggle */}
             <button
+              onClick={toggleTheme}
               type="button"
-              className={styles.iconBtn}
+              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
+              title={settings.theme === "dark" ? "Light Mode" : "Dark Mode"}
+            >
+              {settings.theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Settings Modal Toggle */}
+            <button
+              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
               onClick={() => setSettingsOpen(true)}
               title={t.settings.title}
-              aria-label={t.settings.title}
+              type="button"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-              </svg>
+              <SettingsIcon className="w-3.5 h-3.5" />
             </button>
           </div>
         </header>
 
-        {/* ── Messages / Gem Skill Selection Welcome Screen ── */}
+        {/* ── Chat Messages or Gem Skill Selection Matrix ─────────── */}
         {hasMessages ? (
-          <div ref={messagesAreaRef} className={styles.messagesArea} onScroll={handleScroll}>
+          <div
+            ref={messagesAreaRef}
+            className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6"
+            onScroll={handleScroll}
+          >
             {messages.map((msg, idx) => {
-              const isLastAssistant =
-                idx === messages.length - 1 && msg.role === "assistant";
+              const isLastAssistant = idx === messages.length - 1 && msg.role === "assistant";
               return (
                 <ChatMessage
                   key={msg.id}
@@ -509,131 +495,144 @@ export default function ChatPage() {
                   isStreaming={isStreaming && isLastAssistant}
                   isLastAssistant={isLastAssistant}
                   onRegenerate={() => regenerateLast(selectedModel)}
-                  onContinue={() => handleSend(t.chat?.continuePrompt || "Lanjutkan dari bagian yang terpotong secara lengkap dan tuntas sampai selesai.")}
+                  onContinue={() =>
+                    handleSend(
+                      t.chat?.continuePrompt ||
+                        "Lanjutkan dari bagian yang terpotong secara lengkap dan tuntas sampai selesai."
+                    )
+                  }
                   t={t.chat}
                 />
               );
             })}
 
             {error && (
-              <div className={styles.errorToast}>
-                <div className={styles.errorContent}>
-                  <div className={styles.errorLeft}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                    <span>{error}</span>
-                  </div>
-                </div>
+              <div className="max-w-2xl mx-auto p-4 border border-[#F43F5E]/30 bg-[#F43F5E]/10 rounded flex items-center gap-3 text-xs font-mono text-[#F43F5E]">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                <span>{error}</span>
               </div>
             )}
 
             <div ref={messagesEndRef} />
           </div>
         ) : (
-          <div ref={messagesAreaRef} className={styles.welcomeScrollArea}>
-            <div className={styles.welcome}>
-              {/* Header */}
-              <div className={styles.welcomeHeader}>
-                <div className={styles.welcomeIcon}>
-                  <img
-                    src="/logo-icon.png"
-                    alt="EL.AI"
-                    className={styles.welcomeLogoImg}
-                  />
-                </div>
-                <div className={styles.welcomeBadgeRow}>
-                  <span className={selectedGemId ? styles.gemSelectedBadge : styles.gemRequiredBadge}>
-                    {selectedGemId ? `✓ ${t.welcome.gemSelectedBadge}` : `${t.welcome.chooseGemRequiredBadge}`}
-                  </span>
-                </div>
-                <h2 className={styles.welcomeTitle}>
+          <div ref={messagesAreaRef} className="flex-1 overflow-y-auto px-4 sm:px-6 py-8 sm:py-12">
+            <div className="max-w-4xl mx-auto">
+              {/* Editorial Welcome Header */}
+              <div className="mb-10 pb-6 border-b border-[#E5E5E0] dark:border-[#27272A]">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#666666] dark:text-[#A1A1AA] mb-2 block">
+                  00 // OPERATIONAL GEM SPECIALIZATION MATRIX
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#111111] dark:text-[#FAFAFA]">
                   {t.welcome.chooseGemTitle}
                 </h2>
-                <p className={styles.welcomeSubtitle}>
+                <p className="max-w-xl text-sm text-[#666666] dark:text-[#A1A1AA] mt-2 font-normal tracking-tight">
                   {t.welcome.chooseGemSubtitle}
                 </p>
               </div>
 
               {/* Warning Banner if user attempts to send message without picking a Gem Skill */}
               {gemWarning && (
-                <div className={styles.gemWarningBanner}>
-                  <div className={styles.gemWarningIcon}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                  </div>
+                <div className="mb-6 p-4 border border-[#F59E0B]/40 bg-[#F59E0B]/10 rounded flex items-center gap-3 text-xs font-mono text-[#F59E0B] animate-status-pulse">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                   <span>{t.welcome.warningChooseGem}</span>
                 </div>
               )}
 
-              {/* Gem Skill Selector Cards Grid */}
-              <div className={`${styles.gemGrid} ${gemWarning ? styles.gemGridShake : ""}`}>
+              {/* 2x3 Architectural Grid with Exposed Hairline Borders */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border border-[#E5E5E0] dark:border-[#27272A] divide-y md:divide-y-0 md:divide-x divide-[#E5E5E0] dark:divide-[#27272A] mb-8 bg-black/[0.015] dark:bg-white/[0.015]">
                 {gemOptions.map((gem) => {
                   const isSelected = selectedGemId === gem.id;
+
                   return (
                     <button
                       key={gem.id}
                       type="button"
-                      className={`${styles.gemCard} ${isSelected ? styles.gemCardSelected : ""}`}
                       onClick={() => handleSelectGem(gem.id)}
-                      style={{
-                        "--gem-color": gem.color,
-                        "--gem-gradient": gem.gradient,
-                        "--gem-border": gem.borderColor,
-                      } as React.CSSProperties}
+                      className={`p-6 text-left flex flex-col justify-between group transition-colors duration-150 border-b border-[#E5E5E0] dark:border-[#27272A] ${
+                        isSelected
+                          ? "bg-[#111111] text-[#F9F9F8] dark:bg-[#FAFAFA] dark:text-[#09090B]"
+                          : "hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                      }`}
                     >
-                      <div className={styles.gemCardHeader}>
-                        <div className={styles.gemCardIconWrapper} style={{ color: gem.color }}>
+                      <div>
+                        {/* Top row: Monospace Index + Status Pill */}
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#E5E5E0]/60 dark:border-[#27272A]/60">
+                          <span
+                            className={`font-mono text-sm font-light ${
+                              isSelected ? "text-[#F9F9F8] dark:text-[#09090B]" : "text-[#666666] dark:text-[#A1A1AA]"
+                            }`}
+                          >
+                            {gem.index} //
+                          </span>
+                          <span
+                            className={`font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border ${
+                              isSelected
+                                ? "border-white/30 bg-white/20 text-white dark:border-black/30 dark:bg-black/10 dark:text-black"
+                                : "border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981]"
+                            }`}
+                          >
+                            {isSelected ? "✓ ACTIVE" : gem.statusLabel}
+                          </span>
+                        </div>
+
+                        {/* Title with icon */}
+                        <div className="flex items-center gap-2 mb-2">
                           {gem.icon}
+                          <span className="font-medium text-base tracking-tight">{gem.name}</span>
                         </div>
-                        <div className={styles.gemCardRadio}>
-                          {isSelected ? (
-                            <span className={styles.gemCardCheckIcon} style={{ background: gem.color }}>
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                            </span>
-                          ) : (
-                            <span className={styles.gemCardUncheckedCircle} />
-                          )}
-                        </div>
+
+                        {/* Description */}
+                        <p
+                          className={`text-xs leading-relaxed font-normal mb-6 ${
+                            isSelected ? "text-[#F9F9F8]/80 dark:text-[#09090B]/80" : "text-[#666666] dark:text-[#A1A1AA]"
+                          }`}
+                        >
+                          {gem.description}
+                        </p>
                       </div>
 
-                      <div className={styles.gemCardBody}>
-                        <div className={styles.gemCardTitleRow}>
-                          <span className={styles.gemCardTitle}>{gem.name}</span>
-                          {isSelected && <span className={styles.gemActivePill} style={{ background: gem.color }}>{t.welcome.gemSelectedBadge}</span>}
-                        </div>
-                        <p className={styles.gemCardDescription}>{gem.description}</p>
+                      {/* Directional Action */}
+                      <div
+                        className={`inline-flex items-center gap-1.5 font-mono text-[11px] ${
+                          isSelected ? "text-[#10B981]" : "text-[#111111] dark:text-[#FAFAFA] group-hover:text-[#10B981]"
+                        }`}
+                      >
+                        <span>{isSelected ? "Specialization Loaded" : "Activate Persona"}</span>
+                        <span className="arrow-shift">→</span>
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Starter Prompts (Shown once a Gem is chosen) */}
+              {/* Starter Prompt Chips (Shown once a Gem is selected) */}
               {selectedGemId && (
-                <div className={styles.starterSection}>
-                  <div className={styles.starterHeader}>
-                    <span className={styles.starterTitleIcon}>💡</span>
-                    <span className={styles.starterTitle}>{t.welcome.starterPromptsTitle}</span>
+                <div className="pt-6 border-t border-[#E5E5E0] dark:border-[#27272A]">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#666666] dark:text-[#A1A1AA]">
+                      01 // SUGGESTED INFERENCE VECTORS
+                    </span>
+                    <span className="font-mono text-[10px] text-[#10B981]">
+                      Click to insert prompt
+                    </span>
                   </div>
-                  <div className={styles.starterGrid}>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {activePrompts.map((prompt, pIdx) => (
                       <button
                         key={pIdx}
                         type="button"
-                        className={styles.starterChip}
+                        className="group p-3 text-left border border-[#E5E5E0] dark:border-[#27272A] hover:border-[#111111] dark:hover:border-white rounded transition-colors flex items-center justify-between gap-3 bg-black/[0.015] dark:bg-white/[0.015]"
                         onClick={() => handleStarterClick(prompt)}
-                        title={settings.language === "en" ? "Insert into message input to customize" : "Tempel ke percakapan untuk disesuaikan"}
+                        title="Insert into chat input"
                       >
-                        <span className={styles.starterChipText}>{prompt}</span>
-                        <span className={styles.starterChipArrow}>✎</span>
+                        <span className="text-xs text-[#111111] dark:text-[#FAFAFA] tracking-tight leading-snug">
+                          {prompt}
+                        </span>
+                        <span className="font-mono text-xs text-[#666666] dark:text-[#A1A1AA] group-hover:text-[#111111] dark:group-hover:text-white arrow-shift">
+                          →
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -643,8 +642,8 @@ export default function ChatPage() {
           </div>
         )}
 
-        {/* ── Input Area ──────────────────────────────────────── */}
-        <div className={styles.inputArea}>
+        {/* ── Input Area with Exposed 1px Top Border ──────────────── */}
+        <div className="border-t border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md pt-3 pb-4">
           <ChatInput
             value={inputDraft}
             onChange={setInputDraft}
@@ -657,7 +656,7 @@ export default function ChatPage() {
         </div>
       </main>
 
-      {/* ── Settings & Gem Skills Modal ────────────────────── */}
+      {/* ── Settings & Gem Skills Modal ────────────────────────────── */}
       <SettingsModal
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
@@ -670,7 +669,7 @@ export default function ChatPage() {
           setActiveGemId(id);
           setSelectedGemId(id || "general");
           if (activeSessionId) {
-            saveSessionMessages(activeSessionId, messages, selectedModel, id);
+            updateSessionGem(activeSessionId, id);
           }
         }}
         onUpdateSettings={updateSettings}

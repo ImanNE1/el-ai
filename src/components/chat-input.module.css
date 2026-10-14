@@ -13,26 +13,30 @@
   gap: 10px;
   padding: 10px 14px;
   background: var(--bg-input);
-  backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
-  border-radius: 20px;
-  box-shadow:
-    0 0 0 1px var(--border-subtle),
-    0 8px 30px rgba(0, 0, 0, 0.15);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+[data-theme="light"] .inputContainer {
+  background: #FFFFFF;
+  border-color: #E5E5E0;
+}
+
+[data-theme="dark"] .inputContainer {
+  background: #121215;
+  border-color: #27272A;
 }
 
 .inputContainer:focus-within {
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow:
-    0 0 0 1px rgba(99, 102, 241, 0.25),
-    0 8px 30px rgba(0, 0, 0, 0.4),
-    0 0 24px rgba(99, 102, 241, 0.12);
+  border-color: var(--border-focused);
+  box-shadow: none;
 }
 
 .inputContainerDragging {
-  border-color: var(--accent-primary) !important;
-  box-shadow: 0 0 0 2px var(--accent-primary), 0 8px 32px rgba(99, 102, 241, 0.35) !important;
+  border-color: var(--status-scale) !important;
+  box-shadow: 0 0 0 1px var(--status-scale) !important;
 }
 
 .inputInnerColumn {

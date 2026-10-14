@@ -1,62 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ═══════════════════════════════════════════════════════════════
-   Global Styles — AI ChatBot (EL)
-   Design System: Light mode (default) & Dark mode palette
+   Design System — Swiss Editorial & Linear/Vercel Aesthetics
+   High-Contrast Minimalist, Architectural Grid, Monospace Metrics
    ═══════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-/* ── CSS Custom Properties ─────────────────────────────────── */
-:root {
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+/* ── Custom Utilities for Swiss Editorial Design ────────── */
+@layer utilities {
+  .hairline-border {
+    border-color: #E5E5E0;
+  }
+  .dark .hairline-border {
+    border-color: #27272A;
+  }
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
+
+/* Micro-interaction: Arrow shift 4px to the right on hover */
+.group:hover .arrow-shift {
+  transform: translateX(4px);
+}
+.arrow-shift {
+  display: inline-block;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
 
 :root,
 [data-theme="light"] {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-elevated: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-input: rgba(255, 255, 255, 0.98);
-  --bg-sidebar: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --accent-primary: #4f46e5;
-  --accent-secondary: #7c3aed;
-  --accent-cyan: #0284c7;
-  --border-subtle: rgba(15, 23, 42, 0.08);
-  --border-hover: rgba(15, 23, 42, 0.16);
-  --border-focused: rgba(79, 70, 229, 0.5);
-  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.06);
-  --orb-opacity: 0.05;
-  --dropdown-bg: rgba(255, 255, 255, 0.98);
-  --modal-bg: rgba(255, 255, 255, 0.99);
+  --bg-primary: #F9F9F8;
+  --bg-secondary: #F2F2F0;
+  --bg-elevated: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-sidebar: #F9F9F8;
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #666666;
+  --accent-primary: #111111;
+  --accent-secondary: #333333;
+  --accent-cyan: #09090B;
+  --border-subtle: #E5E5E0;
+  --border-hover: #D4D4CF;
+  --border-focused: #111111;
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.04);
+  --orb-opacity: 0;
+  --dropdown-bg: #FFFFFF;
+  --modal-bg: #F9F9F8;
+  --status-scale: #10B981;
+  --status-hold: #F59E0B;
+  --status-pause: #F43F5E;
 }
 
 [data-theme="dark"] {
-  --bg-primary: #0b0d17;
-  --bg-secondary: #12141f;
-  --bg-elevated: #1a1c2e;
-  --bg-card: rgba(22, 24, 38, 0.85);
-  --bg-input: rgba(22, 24, 38, 0.85);
-  --bg-sidebar: rgba(14, 16, 28, 0.96);
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-primary: #6366f1;
-  --accent-secondary: #8b5cf6;
-  --accent-cyan: #06b6d4;
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --border-focused: rgba(99, 102, 241, 0.45);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --orb-opacity: 0.12;
-  --dropdown-bg: rgba(15, 17, 28, 0.97);
-  --modal-bg: rgba(18, 20, 32, 0.98);
+  --bg-primary: #09090B;
+  --bg-secondary: #121215;
+  --bg-elevated: #18181B;
+  --bg-card: #141417;
+  --bg-input: #121215;
+  --bg-sidebar: #09090B;
+  --text-primary: #FAFAFA;
+  --text-secondary: #D4D4D8;
+  --text-muted: #A1A1AA;
+  --accent-primary: #FAFAFA;
+  --accent-secondary: #E4E4E7;
+  --accent-cyan: #FAFAFA;
+  --border-subtle: #27272A;
+  --border-hover: #3F3F46;
+  --border-focused: #FAFAFA;
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --orb-opacity: 0;
+  --dropdown-bg: #141417;
+  --modal-bg: #09090B;
+  --status-scale: #10B981;
+  --status-hold: #F59E0B;
+  --status-pause: #F43F5E;
 }
 
 /* ── Reset & Base ──────────────────────────────────────────── */

@@ -163,7 +163,7 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-high
 
         // Auto generate title if it was "New Conversation" and we have at least 1 user message
         let title = s.title;
-        if ((title === "New Conversation" || !title) && newMessages.length > 0) {
+        if ((title === "New Conversation" || !title) && newMessages && newMessages.length > 0) {
           const firstUserMsg = newMessages.find((m) => m.role === "user");
           if (firstUserMsg) {
             if (firstUserMsg.content && firstUserMsg.content.trim()) {
@@ -176,16 +176,38 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-high
           }
         }
 
+        // CRITICAL PROTECTION: If s.messages already has messages and newMessages is empty, preserve s.messages
+        const preservedMessages =
+          newMessages && newMessages.length > 0
+            ? newMessages
+            : s.messages && s.messages.length > 0
+            ? s.messages
+            : newMessages || [];
+
         return {
           ...s,
           title,
-          messages: newMessages,
+          messages: preservedMessages,
           model: currentModel || s.model,
           gemId: gemId !== undefined ? gemId : s.gemId,
           updatedAt: Date.now(),
         };
       });
     });
+  }, []);
+
+  // Update only Gem ID of a session
+  const updateSessionGem = useCallback((sessionId: string, gemId: string | null) => {
+    setSessions((prev) =>
+      prev.map((s) => (s.id === sessionId ? { ...s, gemId, updatedAt: Date.now() } : s))
+    );
+  }, []);
+
+  // Update only Model of a session
+  const updateSessionModel = useCallback((sessionId: string, model: string) => {
+    setSessions((prev) =>
+      prev.map((s) => (s.id === sessionId ? { ...s, model, updatedAt: Date.now() } : s))
+    );
   }, []);
 
   return {
@@ -199,5 +221,8 @@ export function useChatSessions(defaultModel: string = "ag/gemini-3.8-flash-high
     renameSession,
     clearAllSessions,
     saveSessionMessages,
+    updateSessionGem,
+    updateSessionModel,
   };
 }
+
