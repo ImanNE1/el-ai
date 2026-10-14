@@ -89,7 +89,8 @@
   height: 22px;
   border-radius: 5px;
   background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(255, 140, 0, 0.35);
+  box-shadow: 0 0 10px rgba(255, 140, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,29 +146,32 @@
 
 [data-theme="light"] .newChatButton {
   background: #FFFFFF;
-  border-color: #E5E5E0;
-  color: #111111;
+  border-color: #ECE6DE;
+  color: #141210;
 }
 
 [data-theme="dark"] .newChatButton {
-  background: #141417;
-  border-color: #27272A;
-  color: #FAFAFA;
+  background: #161311;
+  border-color: #2A2420;
+  color: #FAF7F2;
 }
 
 .newChatButton:hover {
-  border-color: var(--text-primary);
-  background: var(--bg-hover);
+  border-color: #FF8C00;
+  color: #EA580C;
+  background: rgba(255, 140, 0, 0.05);
 }
 
 [data-theme="light"] .newChatButton:hover {
-  background: #F4F4F2;
-  border-color: #111111;
+  background: rgba(255, 140, 0, 0.04);
+  border-color: #FF8C00;
+  color: #EA580C;
 }
 
 [data-theme="dark"] .newChatButton:hover {
-  background: #1A1A1E;
-  border-color: #FAFAFA;
+  background: rgba(255, 140, 0, 0.08);
+  border-color: #FF8C00;
+  color: #FFB74D;
 }
 
 .newChatButton:active {
@@ -246,23 +250,35 @@
 
 .sessionItemActive {
   background: var(--bg-elevated);
-  border-color: var(--border-subtle);
-  box-shadow: none;
+  border-color: rgba(255, 140, 0, 0.35);
+  box-shadow: 0 2px 8px rgba(20, 18, 16, 0.03);
 }
 
 [data-theme="light"] .sessionItemActive {
   background: #FFFFFF;
-  border-color: #D4D4CF;
+  border-color: rgba(255, 140, 0, 0.35);
 }
 
 [data-theme="dark"] .sessionItemActive {
-  background: #141417;
-  border-color: #3F3F46;
+  background: #161311;
+  border-color: rgba(255, 140, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .sessionItemActive:hover {
   background: var(--bg-elevated);
-  border-color: var(--border-focused);
+  border-color: #FF8C00;
+}
+
+.activeIndicator {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: linear-gradient(to bottom, #FFD700 0%, #FF8C00 60%, #FF4500 100%);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px rgba(255, 140, 0, 0.45);
 }
 
 .sessionContent {
@@ -281,7 +297,7 @@
 }
 
 .sessionItemActive .chatIcon {
-  color: var(--status-scale);
+  color: #FF8C00;
   opacity: 1;
 }
 

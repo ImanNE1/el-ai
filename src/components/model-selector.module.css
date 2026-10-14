@@ -30,24 +30,24 @@
 
 [data-theme="light"] .trigger {
   background: #FFFFFF;
-  border-color: #E5E5E0;
-  color: #111111;
+  border-color: #ECE6DE;
+  color: #141210;
 }
 
 [data-theme="light"] .trigger:hover {
-  background: #F4F4F2;
-  border-color: #111111;
+  background: #F8F5EF;
+  border-color: #FF8C00;
 }
 
 [data-theme="dark"] .trigger {
-  background: #141417;
-  border-color: #27272A;
-  color: #FAFAFA;
+  background: #161311;
+  border-color: #2A2420;
+  color: #FAF7F2;
 }
 
 [data-theme="dark"] .trigger:hover {
-  background: #1A1A1E;
-  border-color: #FAFAFA;
+  background: #1E1A17;
+  border-color: #FF8C00;
 }
 
 .trigger:disabled {
@@ -189,15 +189,15 @@
 }
 
 [data-theme="light"] .tabBtnActive {
-  background: #F2F2F0;
-  border-color: #D4D4CF;
-  color: #111111;
+  background: rgba(255, 140, 0, 0.08);
+  border-color: rgba(255, 140, 0, 0.3);
+  color: #EA580C;
 }
 
 [data-theme="dark"] .tabBtnActive {
-  background: #18181B;
-  border-color: #3F3F46;
-  color: #FAFAFA;
+  background: rgba(255, 183, 77, 0.12);
+  border-color: rgba(255, 183, 77, 0.35);
+  color: #FFB74D;
 }
 
 /* ── Groups & Options ──────────────────────────────────────── */
@@ -267,13 +267,13 @@
 }
 
 [data-theme="light"] .optionActive {
-  background: #F4F4F2;
-  border-color: #D4D4CF;
+  background: rgba(255, 140, 0, 0.06);
+  border-color: rgba(255, 140, 0, 0.25);
 }
 
 [data-theme="dark"] .optionActive {
-  background: #18181B;
-  border-color: #3F3F46;
+  background: rgba(255, 183, 77, 0.08);
+  border-color: rgba(255, 183, 77, 0.3);
 }
 
 .optionInfo {

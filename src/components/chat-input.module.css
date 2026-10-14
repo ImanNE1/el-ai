@@ -1,5 +1,10 @@
+/* ═══════════════════════════════════════════════════════════════
+   Chat Input Styles — Swiss Editorial & Linear/Vercel Aesthetics
+   High-Contrast Minimalist, Hairline Borders, Responsive Composer
+   ═══════════════════════════════════════════════════════════════ */
+
 .inputWrapper {
-  padding: 0 20px 20px;
+  padding: 0 20px 16px;
   max-width: 860px;
   margin: 0 auto;
   width: 100%;
@@ -11,8 +16,8 @@
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  padding: 10px 14px;
-  background: var(--bg-input);
+  padding: 9px 12px;
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   box-shadow: none;
@@ -21,22 +26,26 @@
 
 [data-theme="light"] .inputContainer {
   background: #FFFFFF;
-  border-color: #E5E5E0;
+  border-color: #ECE6DE;
 }
 
 [data-theme="dark"] .inputContainer {
-  background: #121215;
-  border-color: #27272A;
+  background: #161311;
+  border-color: #2A2420;
 }
 
 .inputContainer:focus-within {
-  border-color: var(--border-focused);
-  box-shadow: none;
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 1px rgba(255, 140, 0, 0.25);
+}
+
+.inputContainerHasContent {
+  border-color: #FFB74D;
 }
 
 .inputContainerDragging {
-  border-color: var(--status-scale) !important;
-  box-shadow: 0 0 0 1px var(--status-scale) !important;
+  border-color: #FF8C00 !important;
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.4) !important;
 }
 
 .inputInnerColumn {
@@ -44,7 +53,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* ── Image Attachment Previews Strip ────────────────────────── */
@@ -60,25 +69,19 @@
 
 .previewCard {
   position: relative;
-  width: 58px;
-  height: 58px;
-  border-radius: 12px;
+  width: 54px;
+  height: 54px;
+  border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
   flex-shrink: 0;
-  animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[data-theme="light"] .previewCard {
-  border-color: rgba(0, 0, 0, 0.12);
-  background: #f1f5f9;
+  animation: popIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes popIn {
   from {
-    transform: scale(0.85);
+    transform: scale(0.9);
     opacity: 0;
   }
   to {
@@ -96,154 +99,109 @@
 
 .removeImageBtn {
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: 2px;
+  right: 2px;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
-  font-size: 13px;
-  line-height: 1;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  font-size: 13px;
+  line-height: 1;
+  transition: all 0.12s ease;
 }
 
 .removeImageBtn:hover {
-  background: #ef4444;
-  border-color: #ef4444;
-  transform: scale(1.15);
+  background: #f43f5e;
 }
 
-/* ── Document Attachment Previews ─────────────────────────── */
+/* ── Document Attachment Previews ──────────────────────────── */
 .docPreviewCard {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  max-width: 260px;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   flex-shrink: 0;
-  animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-[data-theme="light"] .docPreviewCard {
-  background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  max-width: 240px;
+  animation: popIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .docPreviewIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-}
-
-.docType_pdf .docPreviewIcon {
-  background: rgba(239, 68, 68, 0.15);
-}
-
-.docType_docx .docPreviewIcon {
-  background: rgba(59, 130, 246, 0.15);
-}
-
-.docType_xlsx .docPreviewIcon,
-.docType_xls .docPreviewIcon {
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.docType_csv .docPreviewIcon {
-  background: rgba(6, 182, 212, 0.15);
 }
 
 .docPreviewMeta {
   display: flex;
   flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
   min-width: 0;
-  flex: 1;
 }
 
 .docPreviewName {
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 500;
   color: var(--text-primary);
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 140px;
+  white-space: nowrap;
 }
 
 .docPreviewSub {
-  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  font-size: 9.5px;
   color: var(--text-muted);
-  margin-top: 2px;
+  letter-spacing: 0.02em;
 }
 
 .removeDocBtn {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-secondary);
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   cursor: pointer;
-  padding: 0;
-  margin-left: 4px;
-  transition: all 0.15s ease;
+  padding: 2px 4px;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 4px;
+  margin-left: 2px;
   flex-shrink: 0;
+  transition: color 0.12s ease;
 }
 
 .removeDocBtn:hover {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: #fff;
-  transform: scale(1.1);
+  color: #f43f5e;
 }
 
 .processingThumb {
-  min-width: 60px;
-  height: 58px;
-  padding: 0 12px;
-  gap: 8px;
-  border-radius: 12px;
-  border: 1px dashed var(--border-hover);
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-hover);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
   flex-shrink: 0;
 }
 
-.processingText {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
 .miniSpinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(99, 102, 241, 0.25);
-  border-top-color: var(--accent-primary);
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--text-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   flex-shrink: 0;
@@ -257,28 +215,33 @@
 .dragOverlay {
   position: absolute;
   inset: 0;
-  border-radius: 20px;
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(12px);
+  border-radius: 8px;
+  background: rgba(9, 9, 11, 0.94);
+  backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  z-index: 10;
-  color: var(--accent-primary);
-  font-size: 13.5px;
-  font-weight: 600;
-  border: 2px dashed var(--accent-primary);
+  z-index: 20;
+  color: var(--status-scale);
+  font-size: 13px;
+  font-weight: 500;
+  border: 2px dashed var(--status-scale);
   pointer-events: none;
-  animation: fadeIn 0.15s ease-out;
+  animation: fadeIn 0.12s ease-out;
 }
 
 [data-theme="light"] .dragOverlay {
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(249, 249, 248, 0.95);
 }
 
-/* ── Textarea ──────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Textarea (Expands smoothly to ~5 lines when text exists) ─ */
 .textarea {
   flex: 1;
   background: transparent;
@@ -286,37 +249,24 @@
   outline: none;
   resize: none;
   color: var(--text-primary);
-  font-size: 14.5px;
+  font-size: 14px;
   font-family: inherit;
-  line-height: 1.6;
+  line-height: 1.5;
   padding: 6px 4px;
-  max-height: 200px;
+  min-height: 24px;
+  max-height: 240px;
+  transition: min-height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   scrollbar-width: thin;
   scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+.textareaExpanded {
+  min-height: 105px; /* ~5 lines of text with 1.5 line-height */
 }
 
 .textarea::placeholder {
   color: var(--text-muted);
   opacity: 0.75;
-}
-
-[data-theme="light"] .inputContainer {
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.12);
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
-}
-
-[data-theme="light"] .inputContainer:focus-within {
-  border-color: rgba(79, 70, 229, 0.5);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12), 0 8px 24px rgba(15, 23, 42, 0.08);
-}
-
-[data-theme="light"] .textarea {
-  color: #0f172a;
-}
-
-[data-theme="light"] .textarea::placeholder {
-  color: #94a3b8;
 }
 
 /* ── Controls ──────────────────────────────────────────────── */
@@ -328,105 +278,291 @@
   margin-bottom: 2px;
 }
 
-/* ── Left Action: Upload (+) Button ───────────────────────── */
-.attachBtnLeft {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  background: rgba(125, 125, 125, 0.06);
-  color: var(--text-secondary);
+.counter {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+  padding-right: 4px;
+}
+
+.counterWarn {
+  color: #f43f5e;
+  font-weight: 600;
+}
+
+/* ── Send & Stop Button ────────────────────────────────────── */
+.sendButton {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid #FF8C00;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%);
+  color: #FFFFFF;
+  box-shadow: 0 3px 12px rgba(255, 140, 0, 0.3);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sendButton:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 18px rgba(255, 140, 0, 0.45);
+  transform: scale(1.03);
+}
+
+.sendButton:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.sendButton:disabled {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+  box-shadow: none;
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.stopButton {
+  background: #FF4500 !important;
+  color: #ffffff !important;
+  border-color: #FF4500 !important;
+  animation: pulseGlow 1.8s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(255, 69, 0, 0.15);
+  }
+}
+
+/* ── Left Action: Upload (+) Button with Media Popover ─────── */
+.attachWrapper {
+  position: relative;
   flex-shrink: 0;
   margin-bottom: 2px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.attachBtnLeft {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
 .attachBtnLeft:hover:not(:disabled) {
-  background: var(--border-hover);
-  color: var(--text-primary);
-  border-color: rgba(99, 102, 241, 0.4);
-  transform: scale(1.08);
+  background: rgba(255, 140, 0, 0.08);
+  color: #EA580C;
+  border-color: #FF8C00;
 }
 
-.attachBtnLeft:active:not(:disabled) {
-  transform: scale(0.94);
+.attachBtnLeftActive {
+  background: rgba(255, 140, 0, 0.12);
+  color: #EA580C;
+  border-color: #FF8C00;
 }
 
 .attachBtnLeft:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-  transform: none;
 }
 
-[data-theme="light"] .attachBtnLeft {
-  background: rgba(15, 23, 42, 0.05);
-  border-color: rgba(15, 23, 42, 0.12);
-  color: #475569;
+.attachIcon {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-[data-theme="light"] .attachBtnLeft:hover:not(:disabled) {
-  background: rgba(79, 70, 229, 0.1);
-  border-color: rgba(79, 70, 229, 0.35);
-  color: #4338ca;
+.attachIconOpen {
+  transform: rotate(45deg);
 }
 
-.counter {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-family: monospace;
-  padding-right: 4px;
+/* ── Media Source Menu Popover ─────────────────────────────── */
+.mediaBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.12s ease-out;
 }
 
-.counterWarn {
-  color: #f87171;
+.mediaPopover {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  width: 320px;
+  max-width: calc(100vw - 28px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.2),
+    0 0 0 1px var(--border-subtle);
+  padding: 6px;
+  z-index: 90;
+  animation: popoverSlideUp 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+[data-theme="light"] .mediaPopover {
+  background: #FFFFFF;
+  border-color: #ECE6DE;
+  box-shadow: 0 18px 40px rgba(20, 18, 16, 0.12);
+}
+
+[data-theme="dark"] .mediaPopover {
+  background: #161311;
+  border-color: #2A2420;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes popoverSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mediaPopoverHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 4px;
+}
+
+.mediaPopoverTag {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #EA580C;
   font-weight: 600;
 }
 
-.sendButton {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+[data-theme="dark"] .mediaPopoverTag {
+  color: #FFB74D;
+}
+
+.mediaCloseBtn {
+  background: transparent;
   border: none;
+  color: var(--text-muted);
   cursor: pointer;
+  padding: 2px 6px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: all 0.12s ease;
+}
+
+.mediaCloseBtn:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.mediaOptionBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: all 0.12s ease;
+  color: var(--text-primary);
+}
+
+.mediaOptionBtn:hover {
+  background: rgba(255, 140, 0, 0.05);
+  border-color: rgba(255, 140, 0, 0.25);
+}
+
+.mediaOptionIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6366f1, #7c3aed);
-  color: white;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+  flex-shrink: 0;
+  color: var(--text-primary);
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.sendButton:hover:not(:disabled) {
-  transform: scale(1.06);
-  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
+.mediaOptionBtn:hover .mediaOptionIcon {
+  transform: scale(1.05);
+  border-color: #FF8C00;
+  color: #EA580C;
 }
 
-.sendButton:active:not(:disabled) {
-  transform: scale(0.95);
+.mediaOptionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+  overflow: hidden;
+  min-width: 0;
 }
 
-.sendButton:disabled {
-  opacity: 0.25;
-  cursor: not-allowed;
-  transform: none;
+.mediaOptionTitle {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
 }
 
-.stopButton {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
-  animation: pulseGlow 1.8s infinite;
+.mediaOptionDesc {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.stopButton:hover:not(:disabled) {
-  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.5);
+.mediaOptionArrow {
+  margin-left: auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
+.mediaOptionBtn:hover .mediaOptionArrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--text-primary);
+}
+
+/* ── Footer Row ────────────────────────────────────────────── */
 .footerRow {
   display: flex;
   align-items: center;
@@ -435,8 +571,8 @@
 }
 
 .hint {
-  font-size: 11.5px;
-  color: rgba(148, 163, 184, 0.45);
+  font-size: 11px;
+  color: var(--text-muted);
   user-select: none;
 }
 
@@ -444,46 +580,46 @@
   display: inline-block;
   padding: 1px 5px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 10px;
-  font-family: inherit;
-  color: rgba(148, 163, 184, 0.7);
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-  }
-  50% {
-    box-shadow: 0 2px 16px rgba(239, 68, 68, 0.5);
-  }
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  font-size: 9.5px;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-secondary);
 }
 
 /* ── Mobile Responsive ─────────────────────────────────────── */
 @media (max-width: 640px) {
   .inputWrapper {
-    padding: 0 10px 10px;
+    padding: 0 10px max(10px, env(safe-area-inset-bottom, 10px));
   }
 
   .inputContainer {
     padding: 8px 10px;
-    border-radius: 16px;
+    border-radius: 8px;
     gap: 8px;
   }
 
   .textarea {
     font-size: 16px; /* Prevents auto-zoom on iOS */
-    line-height: 1.4;
+    line-height: 1.45;
     padding: 4px 2px;
-    max-height: 120px;
+    max-height: 180px;
+  }
+
+  .textareaExpanded {
+    min-height: 100px; /* ~5 lines on mobile */
   }
 
   .attachBtnLeft,
   .sendButton {
-    width: 35px;
-    height: 35px;
-    border-radius: 10px;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+  }
+
+  .mediaPopover {
+    left: -2px;
+    width: calc(100vw - 20px);
   }
 
   .footerRow {

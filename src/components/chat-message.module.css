@@ -49,14 +49,15 @@
 }
 
 .assistantAvatar {
-  background: #09090B;
-  border: 1px solid #27272A;
+  background: #0D0B0A;
+  border: 1px solid rgba(255, 140, 0, 0.4);
+  box-shadow: 0 0 10px rgba(255, 140, 0, 0.15);
   overflow: hidden;
 }
 
 [data-theme="light"] .assistantAvatar {
-  background: #111111;
-  border-color: #E5E5E0;
+  background: #141210;
+  border-color: rgba(255, 140, 0, 0.4);
 }
 
 .assistantAvatarImg {
@@ -88,15 +89,15 @@
 }
 
 [data-theme="light"] .userBubble {
-  background: #F2F2F0;
-  border-color: #E5E5E0;
-  color: #111111;
+  background: #F3EFEA;
+  border-color: #ECE6DE;
+  color: #141210;
 }
 
 [data-theme="dark"] .userBubble {
-  background: #18181B;
-  border-color: #27272A;
-  color: #FAFAFA;
+  background: #1C1815;
+  border-color: #2A2420;
+  color: #FAF7F2;
 }
 
 .assistantBubble {
@@ -108,12 +109,12 @@
 
 [data-theme="light"] .assistantBubble {
   background: #FFFFFF;
-  border-color: #E5E5E0;
+  border-color: #ECE6DE;
 }
 
 [data-theme="dark"] .assistantBubble {
-  background: #121215;
-  border-color: #27272A;
+  background: #161311;
+  border-color: #2A2420;
 }
 
 .bubbleHeader {
@@ -154,15 +155,15 @@
 }
 
 [data-theme="light"] .modelBadge {
-  background: #F2F2F0;
-  border-color: #E5E5E0;
-  color: #555555;
+  background: rgba(255, 140, 0, 0.08);
+  border-color: rgba(255, 140, 0, 0.22);
+  color: #EA580C;
 }
 
 [data-theme="dark"] .modelBadge {
-  background: #18181B;
-  border-color: #27272A;
-  color: #A1A1AA;
+  background: rgba(255, 183, 77, 0.1);
+  border-color: rgba(255, 183, 77, 0.25);
+  color: #FFB74D;
 }
 
 .content {

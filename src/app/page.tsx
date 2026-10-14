@@ -56,6 +56,7 @@ export default function ChatPage() {
   const [selectedGemId, setSelectedGemId] = useState<string | null>(null);
   const [gemWarning, setGemWarning] = useState<boolean>(false);
   const [inputDraft, setInputDraft] = useState<string>("");
+  const [timeUtc, setTimeUtc] = useState<string>("");
 
   // Settings & Gem Skills Hook
   const {
@@ -114,6 +115,17 @@ export default function ChatPage() {
   const messagesAreaRef = useRef<HTMLDivElement>(null);
   const currentSessionIdRef = useRef<string>("");
   const shouldAutoScrollRef = useRef(true);
+
+  // Update real-time UTC clock
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTimeUtc(now.toTimeString().split(" ")[0] + " UTC");
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
 
   // Sync active session messages and restore session's gem
@@ -256,15 +268,15 @@ export default function ChatPage() {
         index: "01",
         name: t.welcome.generalName,
         description: t.welcome.generalDesc,
-        statusLabel: "SCALE / ACTIVE",
-        icon: <Sparkles className="w-4 h-4 text-[#10B981]" />,
+        statusLabel: "GOLDEN SUNRISE",
+        icon: <Sparkles className="w-4 h-4 text-[#FF8C00]" />,
         theme: {
-          accent: "#10B981",
-          selectedBg: "bg-emerald-500/[0.08] dark:bg-emerald-500/[0.16]",
-          selectedRing: "ring-1 ring-inset ring-emerald-500/40 dark:ring-emerald-400/40",
-          badgeBg: "bg-emerald-500/15 border-emerald-500/35 text-emerald-800 dark:text-emerald-300",
-          indexText: "text-emerald-700 dark:text-emerald-400 font-medium",
-          actionText: "text-emerald-700 dark:text-emerald-400 font-medium",
+          accent: "#FF8C00",
+          selectedBg: "bg-gradient-to-b from-[#FFD700]/[0.08] via-[#FF8C00]/[0.06] to-transparent",
+          selectedRing: "ring-1 ring-inset ring-[#FF8C00]/60",
+          badgeBg: "bg-[#FF8C00]/15 border-[#FF8C00]/35 text-[#EA580C] dark:text-[#FFB74D]",
+          indexText: "text-[#EA580C] dark:text-[#FFB74D] font-medium",
+          actionText: "text-[#EA580C] dark:text-[#FFB74D] font-medium",
         },
       },
       {
@@ -556,7 +568,7 @@ export default function ChatPage() {
   }, [hasMessages, selectedGemId, gemOptions, t]);
 
   return (
-    <div className="flex fixed inset-0 w-full h-full h-dvh overflow-hidden bg-[#F9F9F8] dark:bg-[#09090B] text-[#111111] dark:text-[#FAFAFA] font-sans antialiased">
+    <div className="flex fixed inset-0 w-full h-full h-dvh overflow-hidden bg-[#FAF9F6] dark:bg-[#0D0B0A] text-[#141210] dark:text-[#FAF7F2] font-sans antialiased">
       {/* ── Conversation History Sidebar with Exposed 1px Right Border ─ */}
       <ChatSidebar
         sessions={sessions}
@@ -572,13 +584,13 @@ export default function ChatPage() {
       />
 
       {/* ── Main Chat Area ────────────────────────────────────────── */}
-      <main className="flex-1 flex flex-col w-full h-full h-dvh min-h-0 min-w-0 relative overflow-hidden bg-[#F9F9F8] dark:bg-[#09090B]">
+      <main className="flex-1 flex flex-col w-full h-full h-dvh min-h-0 min-w-0 relative overflow-hidden bg-[#FAF9F6] dark:bg-[#0D0B0A]">
         {/* Minimalist Sticky Header with Exposed 1px Bottom Border */}
-        <header className="sticky top-0 z-20 flex items-center justify-between px-2.5 sm:px-6 h-14 border-b border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md flex-shrink-0">
+        <header className="sticky top-0 z-20 flex items-center justify-between px-2.5 sm:px-6 h-14 border-b border-[#ECE6DE] dark:border-[#2A2420] bg-[#FAF9F6]/90 dark:bg-[#0D0B0A]/90 backdrop-blur-md flex-shrink-0">
           <div className="flex items-center gap-3.5">
             {/* Sidebar Toggle */}
             <button
-              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
+              className="p-1.5 border border-[#ECE6DE] dark:border-[#2A2420] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#141210] dark:text-[#FAF7F2]"
               onClick={() => setSidebarOpen(!sidebarOpen)}
               title={sidebarOpen ? t.sidebar.closeSidebar : t.sidebar.openSidebar}
               type="button"
@@ -589,39 +601,56 @@ export default function ChatPage() {
               </svg>
             </button>
 
-            {/* Wordmark */}
-            <div className="flex items-baseline gap-2">
-              <span className="font-semibold text-base tracking-tighter">
+            {/* Wordmark with Golden Sunrise Gradient */}
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-semibold text-base tracking-tighter bg-gradient-to-r from-[#FFD700] via-[#FF8C00] to-[#FF4500] bg-clip-text text-transparent">
                 {t.common.appName}
+              </span>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-[#FF8C00] dark:text-[#FFB74D] font-medium">
+                AI
+              </span>
+            </div>
+
+            {/* Live Status Beacon with Golden Sunrise Aura */}
+            <div className="flex items-center gap-1.5 sm:gap-2 pl-2 sm:pl-3 border-l border-[#ECE6DE] dark:border-[#2A2420]">
+              <span className="relative flex h-2 w-2 flex-shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFD700] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF8C00]"></span>
+              </span>
+              <span className="font-mono text-[10px] uppercase text-[#EA580C] dark:text-[#FFB74D] font-medium tracking-tight whitespace-nowrap">
+                Operational <span className="hidden sm:inline">· 14ms</span>
+              </span>
+              <span className="hidden sm:inline font-mono text-[10px] text-[#79716B] dark:text-[#9E968F] tabular-nums pl-1 whitespace-nowrap">
+                · {timeUtc || "07:30:00 UTC"}
               </span>
             </div>
           </div>
 
           {/* Header Controls Right Cluster */}
           <div className="flex items-center gap-1.5 sm:gap-2.5">
-            {/* Active Gem Skill Pill */}
+            {/* Active Gem Skill Pill with Golden Sunrise Accent */}
             {activeGem && (
               <button
                 type="button"
-                className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981] font-mono text-[11px] uppercase tracking-wider"
+                className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#FF8C00]/35 bg-gradient-to-r from-[#FFD700]/10 via-[#FF8C00]/10 to-[#FF4500]/10 text-[#EA580C] dark:text-[#FFB74D] font-mono text-[11px] uppercase tracking-wider transition-all hover:border-[#FF8C00]"
                 onClick={() => setSettingsOpen(true)}
                 title={`${t.settings.gemsTitle}: ${activeGem.name}`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF8C00]" />
                 <span>{activeGem.name}</span>
               </button>
             )}
 
-            {/* + New Session CTA */}
+            {/* + New Session CTA with Golden Sunrise Accent */}
             <button
-              className="group hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-medium border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
+              className="group hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-medium border border-[#ECE6DE] dark:border-[#2A2420] hover:border-[#FF8C00] hover:text-[#EA580C] dark:hover:text-[#FFB74D] hover:bg-[#FF8C00]/[0.04] transition-all rounded text-[#141210] dark:text-[#FAF7F2]"
               onClick={handleNewChat}
               title={t.common.newChat}
               type="button"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 text-[#FF8C00]" />
               <span>{t.common.newChat}</span>
-              <span className="arrow-shift">→</span>
+              <span className="arrow-shift text-[#FF8C00]">→</span>
             </button>
 
             {/* Model Selector */}
@@ -709,28 +738,28 @@ export default function ChatPage() {
           <div ref={messagesAreaRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-6 sm:py-12">
             <div className="max-w-4xl mx-auto">
               {/* Editorial Welcome Header */}
-              <div className="mb-10 pb-6 border-b border-[#E5E5E0] dark:border-[#27272A]">
-                <span className="font-mono text-xs uppercase tracking-widest text-[#666666] dark:text-[#A1A1AA] mb-2 block">
+              <div className="mb-10 pb-6 border-b border-[#ECE6DE] dark:border-[#2A2420]">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#EA580C] dark:text-[#FFB74D] mb-2 block font-medium">
                   00 // OPERATIONAL GEM SPECIALIZATION MATRIX
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#111111] dark:text-[#FAFAFA]">
+                <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#141210] dark:text-[#FAF7F2]">
                   {t.welcome.chooseGemTitle}
                 </h2>
-                <p className="max-w-xl text-sm text-[#666666] dark:text-[#A1A1AA] mt-2 font-normal tracking-tight">
+                <p className="max-w-xl text-sm text-[#79716B] dark:text-[#9E968F] mt-2 font-normal tracking-tight">
                   {t.welcome.chooseGemSubtitle}
                 </p>
               </div>
 
               {/* Warning Banner if user attempts to send message without picking a Gem Skill */}
               {gemWarning && (
-                <div className="mb-6 p-4 border border-[#F59E0B]/40 bg-[#F59E0B]/10 rounded flex items-center gap-3 text-xs font-mono text-[#F59E0B] animate-status-pulse">
+                <div className="mb-6 p-4 border border-[#FF8C00]/40 bg-[#FF8C00]/10 rounded flex items-center gap-3 text-xs font-mono text-[#EA580C] dark:text-[#FFB74D] animate-status-pulse">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                   <span>{t.welcome.warningChooseGem}</span>
                 </div>
               )}
 
               {/* Architectural Grid with Exposed Hairline Borders */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#E5E5E0] dark:bg-[#27272A] border border-[#E5E5E0] dark:border-[#27272A] mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#ECE6DE] dark:bg-[#2A2420] border border-[#ECE6DE] dark:border-[#2A2420] mb-8">
                 {gemOptions.map((gem) => {
                   const isSelected = selectedGemId === gem.id;
                   const theme = gem.theme;
@@ -743,15 +772,15 @@ export default function ChatPage() {
                       className={`p-4 sm:p-6 text-left flex flex-col justify-between group transition-all duration-150 relative ${
                         isSelected
                           ? `${theme.selectedBg} ${theme.selectedRing}`
-                          : "bg-[#F9F9F8] dark:bg-[#09090B] hover:bg-black/[0.025] dark:hover:bg-white/[0.035]"
+                          : "bg-[#FFFFFF] dark:bg-[#161311] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]"
                       }`}
                     >
                       <div>
                         {/* Top row: Monospace Index + Status Pill */}
-                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#E5E5E0]/60 dark:border-[#27272A]/60">
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#ECE6DE]/80 dark:border-[#2A2420]/80">
                           <span
                             className={`font-mono text-sm font-light transition-colors ${
-                              isSelected ? theme.indexText : "text-[#666666] dark:text-[#A1A1AA]"
+                              isSelected ? theme.indexText : "text-[#79716B] dark:text-[#9E968F]"
                             }`}
                           >
                             {gem.index} //
@@ -760,7 +789,7 @@ export default function ChatPage() {
                             className={`font-mono text-[9px] uppercase px-1.5 py-0.5 rounded border transition-colors ${
                               isSelected
                                 ? theme.badgeBg
-                                : "border-[#E5E5E0] dark:border-[#27272A] bg-black/[0.03] dark:bg-white/[0.04] text-[#666666] dark:text-[#A1A1AA]"
+                                : "border-[#ECE6DE] dark:border-[#2A2420] bg-black/[0.025] dark:bg-white/[0.035] text-[#79716B] dark:text-[#9E968F]"
                             }`}
                           >
                             {isSelected ? "✓ ACTIVE" : gem.statusLabel}
@@ -770,7 +799,7 @@ export default function ChatPage() {
                         {/* Title with icon */}
                         <div className="flex items-center gap-2 mb-2">
                           {gem.icon}
-                          <span className="font-medium text-base tracking-tight text-[#111111] dark:text-[#FAFAFA]">
+                          <span className="font-medium text-base tracking-tight text-[#141210] dark:text-[#FAF7F2]">
                             {gem.name}
                           </span>
                         </div>
@@ -778,7 +807,7 @@ export default function ChatPage() {
                         {/* Description */}
                         <p
                           className={`text-xs leading-relaxed font-normal mb-6 transition-colors ${
-                            isSelected ? "text-[#333333] dark:text-[#D4D4D8]" : "text-[#666666] dark:text-[#A1A1AA]"
+                            isSelected ? "text-[#4A4540] dark:text-[#D7D0C7]" : "text-[#79716B] dark:text-[#9E968F]"
                           }`}
                         >
                           {gem.description}
@@ -788,7 +817,7 @@ export default function ChatPage() {
                       {/* Directional Action */}
                       <div
                         className={`inline-flex items-center gap-1.5 font-mono text-[11px] transition-colors ${
-                          isSelected ? theme.actionText : "text-[#111111] dark:text-[#FAFAFA] group-hover:text-[#10B981]"
+                          isSelected ? theme.actionText : "text-[#141210] dark:text-[#FAF7F2] group-hover:text-[#FF8C00]"
                         }`}
                       >
                         <span>{isSelected ? "Specialization Loaded" : "Activate Persona"}</span>
@@ -801,12 +830,12 @@ export default function ChatPage() {
 
               {/* Starter Prompt Chips (Shown once a Gem is selected) */}
               {selectedGemId && (
-                <div className="pt-6 border-t border-[#E5E5E0] dark:border-[#27272A]">
+                <div className="pt-6 border-t border-[#ECE6DE] dark:border-[#2A2420]">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="font-mono text-xs uppercase tracking-widest text-[#666666] dark:text-[#A1A1AA]">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#EA580C] dark:text-[#FFB74D] font-medium">
                       01 // SUGGESTED INFERENCE VECTORS
                     </span>
-                    <span className="font-mono text-[10px] text-[#10B981]">
+                    <span className="font-mono text-[10px] text-[#FF8C00]">
                       Click to insert prompt
                     </span>
                   </div>
@@ -816,14 +845,14 @@ export default function ChatPage() {
                       <button
                         key={pIdx}
                         type="button"
-                        className="group p-3 text-left border border-[#E5E5E0] dark:border-[#27272A] hover:border-[#111111] dark:hover:border-white rounded transition-colors flex items-center justify-between gap-3 bg-black/[0.015] dark:bg-white/[0.015]"
+                        className="group p-3 text-left border border-[#ECE6DE] dark:border-[#2A2420] hover:border-[#FF8C00]/60 hover:bg-[#FF8C00]/[0.03] rounded transition-all flex items-center justify-between gap-3 bg-white dark:bg-[#161311]"
                         onClick={() => handleStarterClick(prompt)}
                         title="Insert into chat input"
                       >
-                        <span className="text-xs text-[#111111] dark:text-[#FAFAFA] tracking-tight leading-snug">
+                        <span className="text-xs text-[#141210] dark:text-[#FAF7F2] tracking-tight leading-snug">
                           {prompt}
                         </span>
-                        <span className="font-mono text-xs text-[#666666] dark:text-[#A1A1AA] group-hover:text-[#111111] dark:group-hover:text-white arrow-shift">
+                        <span className="font-mono text-xs text-[#79716B] dark:text-[#9E968F] group-hover:text-[#FF8C00] arrow-shift">
                           →
                         </span>
                       </button>

@@ -122,9 +122,19 @@ export default function ChatInput({
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStatus, setProcessingStatus] = useState<string>("");
+  const [isMediaMenuOpen, setIsMediaMenuOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const hasContent = Boolean(
+    (value && value.trim().length > 0) ||
+    attachedImages.length > 0 ||
+    attachedDocs.length > 0
+  );
 
   const setValue = useCallback(
     (newVal: string) => {
@@ -141,12 +151,15 @@ export default function ChatInput({
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
-  }, []);
+    // When text or attachment context is present, expand to ~5 lines (~108px) for clear multiline visibility
+    const minH = hasContent ? 108 : 24;
+    const targetH = Math.max(minH, Math.min(textarea.scrollHeight, 240));
+    textarea.style.height = `${targetH}px`;
+  }, [hasContent]);
 
   useEffect(() => {
     adjustHeight();
-  }, [value, adjustHeight]);
+  }, [value, hasContent, adjustHeight]);
 
   // Handle incoming image files
   const processImageFiles = useCallback(async (imageFiles: File[]) => {
@@ -275,6 +288,51 @@ export default function ChatInput({
     }
   };
 
+  // Handle "Media from Clipboard"
+  const handleMediaFromClipboard = useCallback(async () => {
+    setIsMediaMenuOpen(false);
+    try {
+      if (!navigator.clipboard) {
+        alert("Akses clipboard tidak didukung pada browser ini. Silakan gunakan Ctrl+V / Cmd+V.");
+        return;
+      }
+
+      // Try reading clipboard items (images or files)
+      if (navigator.clipboard.read) {
+        try {
+          const items = await navigator.clipboard.read();
+          const imageFiles: File[] = [];
+          for (const item of items) {
+            const imageType = item.types.find((typeStr) => typeStr.startsWith("image/"));
+            if (imageType) {
+              const blob = await item.getType(imageType);
+              const ext = imageType.split("/")[1] || "png";
+              imageFiles.push(new File([blob], `clipboard-${Date.now()}.${ext}`, { type: imageType }));
+            }
+          }
+          if (imageFiles.length > 0) {
+            await handleIncomingFiles(imageFiles);
+            return;
+          }
+        } catch {
+          // Fallback to clipboard text if reading binary failed or permission issue
+        }
+      }
+
+      // Read text from clipboard
+      const text = await navigator.clipboard.readText();
+      if (text && text.trim()) {
+        setValue(value ? `${value}\n${text}` : text);
+        setTimeout(() => textareaRef.current?.focus(), 50);
+      } else {
+        alert("Clipboard kosong atau tidak berisi teks/gambar yang didukung.");
+      }
+    } catch (err) {
+      console.warn("Clipboard access error:", err);
+      alert("Tidak dapat mengakses clipboard. Silakan tempel secara langsung dengan Ctrl+V.");
+    }
+  }, [handleIncomingFiles, setValue, value]);
+
   // Drag and drop handlers
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -344,13 +402,46 @@ export default function ChatInput({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className={`${styles.inputContainer} ${isDragging ? styles.inputContainerDragging : ""}`}>
-        {/* Hidden File Picker accepting images and documents */}
+      <div className={`${styles.inputContainer} ${isDragging ? styles.inputContainerDragging : ""} ${hasContent ? styles.inputContainerHasContent : ""}`}>
+        {/* Hidden File Picker: General */}
         <input
           type="file"
           ref={fileInputRef}
           accept="image/*,.pdf,.docx,.xlsx,.xls,.csv,.txt,.md,.markdown,.json,.sql,.yaml,.yml"
           multiple
+          style={{ display: "none" }}
+          onChange={handleFileInputChange}
+          aria-hidden="true"
+        />
+
+        {/* Hidden File Picker: Documents */}
+        <input
+          type="file"
+          ref={docInputRef}
+          accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md,.markdown,.json,.sql,.yaml,.yml"
+          multiple
+          style={{ display: "none" }}
+          onChange={handleFileInputChange}
+          aria-hidden="true"
+        />
+
+        {/* Hidden File Picker: Images */}
+        <input
+          type="file"
+          ref={imageInputRef}
+          accept="image/*"
+          multiple
+          style={{ display: "none" }}
+          onChange={handleFileInputChange}
+          aria-hidden="true"
+        />
+
+        {/* Hidden File Picker: Camera */}
+        <input
+          type="file"
+          ref={cameraInputRef}
+          accept="image/*"
+          capture="environment"
           style={{ display: "none" }}
           onChange={handleFileInputChange}
           aria-hidden="true"
@@ -368,20 +459,174 @@ export default function ChatInput({
           </div>
         )}
 
-        {/* Left Action: Upload (+) Button */}
-        <button
-          type="button"
-          className={styles.attachBtnLeft}
-          onClick={() => fileInputRef.current?.click()}
-          disabled={disabled || (attachedImages.length >= MAX_IMAGE_COUNT && attachedDocs.length >= MAX_DOC_COUNT) || isProcessing}
-          title={t?.uploadAttachment || "Unggah gambar atau dokumen (PDF, Word, Excel, CSV, TXT)"}
-          aria-label={t?.uploadAttachment || "Unggah file"}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-        </button>
+        {/* Left Action: Upload (+) Button with Media Popover */}
+        <div className={styles.attachWrapper}>
+          {isMediaMenuOpen && (
+            <>
+              <div
+                className={styles.mediaBackdrop}
+                onClick={() => setIsMediaMenuOpen(false)}
+                aria-hidden="true"
+              />
+              <div className={styles.mediaPopover}>
+                <div className={styles.mediaPopoverHeader}>
+                  <span className={styles.mediaPopoverTag}>01 // MEDIA FROM...</span>
+                  <button
+                    type="button"
+                    className={styles.mediaCloseBtn}
+                    onClick={() => setIsMediaMenuOpen(false)}
+                    aria-label="Tutup menu"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* 1. Media from Dokumen & File */}
+                <button
+                  type="button"
+                  className={styles.mediaOptionBtn}
+                  onClick={() => {
+                    setIsMediaMenuOpen(false);
+                    docInputRef.current?.click();
+                  }}
+                >
+                  <div className={styles.mediaOptionIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="8" y1="13" x2="16" y2="13" />
+                      <line x1="8" y1="17" x2="16" y2="17" />
+                    </svg>
+                  </div>
+                  <div className={styles.mediaOptionInfo}>
+                    <span className={styles.mediaOptionTitle}>Media from Dokumen & File</span>
+                    <span className={styles.mediaOptionDesc}>PDF, Word (.docx), Excel (.xlsx), CSV, TXT, JSON</span>
+                  </div>
+                  <span className={styles.mediaOptionArrow}>→</span>
+                </button>
+
+                {/* 2. Media from Galeri Foto */}
+                <button
+                  type="button"
+                  className={styles.mediaOptionBtn}
+                  onClick={() => {
+                    setIsMediaMenuOpen(false);
+                    imageInputRef.current?.click();
+                  }}
+                >
+                  <div className={styles.mediaOptionIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  </div>
+                  <div className={styles.mediaOptionInfo}>
+                    <span className={styles.mediaOptionTitle}>Media from Galeri Foto</span>
+                    <span className={styles.mediaOptionDesc}>Pilih gambar dari galeri perangkat (PNG, JPG, WebP)</span>
+                  </div>
+                  <span className={styles.mediaOptionArrow}>→</span>
+                </button>
+
+                {/* 3. Media from Kamera Langsung */}
+                <button
+                  type="button"
+                  className={styles.mediaOptionBtn}
+                  onClick={() => {
+                    setIsMediaMenuOpen(false);
+                    cameraInputRef.current?.click();
+                  }}
+                >
+                  <div className={styles.mediaOptionIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                      <circle cx="12" cy="13" r="4" />
+                    </svg>
+                  </div>
+                  <div className={styles.mediaOptionInfo}>
+                    <span className={styles.mediaOptionTitle}>Media from Kamera / Scan</span>
+                    <span className={styles.mediaOptionDesc}>Pindai berkas langsung menggunakan kamera HP / webcam</span>
+                  </div>
+                  <span className={styles.mediaOptionArrow}>→</span>
+                </button>
+
+                {/* 4. Media from Clipboard */}
+                <button
+                  type="button"
+                  className={styles.mediaOptionBtn}
+                  onClick={handleMediaFromClipboard}
+                >
+                  <div className={styles.mediaOptionIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                      <path d="M12 11h4" />
+                      <path d="M12 16h4" />
+                      <path d="M8 11h.01" />
+                      <path d="M8 16h.01" />
+                    </svg>
+                  </div>
+                  <div className={styles.mediaOptionInfo}>
+                    <span className={styles.mediaOptionTitle}>Media from Clipboard</span>
+                    <span className={styles.mediaOptionDesc}>Tempel instan tangkapan layar atau teks dari clipboard</span>
+                  </div>
+                  <span className={styles.mediaOptionArrow}>→</span>
+                </button>
+
+                {/* 5. Tulis / Tempel Teks Panjang (5 Baris) */}
+                <button
+                  type="button"
+                  className={styles.mediaOptionBtn}
+                  onClick={() => {
+                    setIsMediaMenuOpen(false);
+                    if (!value) {
+                      setValue(" ");
+                    }
+                    setTimeout(() => textareaRef.current?.focus(), 50);
+                  }}
+                >
+                  <div className={styles.mediaOptionIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="4 7 4 4 20 4 20 7" />
+                      <line x1="9" y1="20" x2="15" y2="20" />
+                      <line x1="12" y1="4" x2="12" y2="20" />
+                    </svg>
+                  </div>
+                  <div className={styles.mediaOptionInfo}>
+                    <span className={styles.mediaOptionTitle}>Mode Tulis 5 Baris (Composer)</span>
+                    <span className={styles.mediaOptionDesc}>Buka area input lapang untuk menyusun prompt panjang</span>
+                  </div>
+                  <span className={styles.mediaOptionArrow}>→</span>
+                </button>
+              </div>
+            </>
+          )}
+
+          <button
+            type="button"
+            className={`${styles.attachBtnLeft} ${isMediaMenuOpen ? styles.attachBtnLeftActive : ""}`}
+            onClick={() => setIsMediaMenuOpen(!isMediaMenuOpen)}
+            disabled={disabled || (attachedImages.length >= MAX_IMAGE_COUNT && attachedDocs.length >= MAX_DOC_COUNT) || isProcessing}
+            title={t?.uploadAttachment || "Pilih media atau dokumen untuk dilampirkan"}
+            aria-label={t?.uploadAttachment || "Pilih media"}
+            aria-expanded={isMediaMenuOpen}
+          >
+            <svg
+              className={`${styles.attachIcon} ${isMediaMenuOpen ? styles.attachIconOpen : ""}`}
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </div>
 
         <div className={styles.inputInnerColumn}>
           {/* Attached Attachments Preview Strip */}
@@ -437,17 +682,17 @@ export default function ChatInput({
             </div>
           )}
 
-          {/* Text Area */}
+          {/* Text Area (Expands to ~5 lines when text is present) */}
           <textarea
             ref={textareaRef}
             id="chat-input"
-            className={styles.textarea}
+            className={`${styles.textarea} ${hasContent ? styles.textareaExpanded : ""}`}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             placeholder={placeholder || t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
-            rows={1}
+            rows={hasContent ? 5 : 1}
             maxLength={MAX_CHAR_LIMIT}
             disabled={disabled}
             aria-label={placeholder || t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
