@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     "Swiss Editorial precision meets advanced reasoning AI. Multi-model gateway, gem skill architectures, and automated document export engine (.docx, .pdf, .xlsx).",
   robots: "index, follow",
   icons: {
-    icon: "/logo-icon.png",
-    apple: "/logo-icon.png",
+    icon: "/logo-brand.png",
+    apple: "/logo-brand.png",
   },
 };
 

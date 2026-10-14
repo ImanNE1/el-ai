@@ -91,7 +91,7 @@ function ChatSidebar({
             <div className={styles.sidebarBrand}>
               <div className={styles.brandIcon}>
                 <img
-                  src="/logo-icon.png"
+                  src="/logo-brand.png"
                   alt="EL.AI"
                   className={styles.brandLogoImg}
                 />

@@ -601,14 +601,23 @@ export default function ChatPage() {
               </svg>
             </button>
 
-            {/* Wordmark with Golden Sunrise Gradient */}
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-semibold text-base tracking-tighter bg-gradient-to-r from-[#FFD700] via-[#FF8C00] to-[#FF4500] bg-clip-text text-transparent">
-                {t.common.appName}
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-wider text-[#FF8C00] dark:text-[#FFB74D] font-medium">
-                AI
-              </span>
+            {/* Logo Emblem & Wordmark */}
+            <div className="flex items-center gap-2.5">
+              <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden border border-[#FF8C00]/30 shadow-[0_0_10px_rgba(255,140,0,0.2)] flex-shrink-0 bg-black">
+                <img
+                  src="/logo-brand.png"
+                  alt="EL Logo"
+                  className="w-full h-full object-cover scale-105"
+                />
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="font-semibold text-base tracking-tighter bg-gradient-to-r from-[#FFD700] via-[#FF8C00] to-[#FF4500] bg-clip-text text-transparent">
+                  {t.common.appName}
+                </span>
+                <span className="font-mono text-[9px] uppercase tracking-wider text-[#FF8C00] dark:text-[#FFB74D] font-semibold">
+                  AI
+                </span>
+              </div>
             </div>
 
             {/* Live Status Beacon with Golden Sunrise Aura */}
@@ -737,14 +746,21 @@ export default function ChatPage() {
         ) : (
           <div ref={messagesAreaRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-6 sm:py-12">
             <div className="max-w-4xl mx-auto">
-              {/* Editorial Welcome Header */}
+              {/* Editorial Welcome Header with Brand Emblem */}
               <div className="mb-10 pb-6 border-b border-[#ECE6DE] dark:border-[#2A2420]">
-                <span className="font-mono text-xs uppercase tracking-widest text-[#EA580C] dark:text-[#FFB74D] mb-2 block font-medium">
-                  00 // OPERATIONAL GEM SPECIALIZATION MATRIX
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#141210] dark:text-[#FAF7F2]">
-                  {t.welcome.chooseGemTitle}
-                </h2>
+                <div className="flex items-center gap-3.5 mb-3">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden border border-[#FF8C00]/35 shadow-[0_0_16px_rgba(255,140,0,0.22)] bg-black flex-shrink-0">
+                    <img src="/logo-brand.png" alt="EL Logo" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#EA580C] dark:text-[#FFB74D] block font-medium">
+                      00 // OPERATIONAL GEM SPECIALIZATION MATRIX
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-[#141210] dark:text-[#FAF7F2]">
+                      {t.welcome.chooseGemTitle}
+                    </h2>
+                  </div>
+                </div>
                 <p className="max-w-xl text-sm text-[#79716B] dark:text-[#9E968F] mt-2 font-normal tracking-tight">
                   {t.welcome.chooseGemSubtitle}
                 </p>

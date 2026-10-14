@@ -168,7 +168,7 @@ function ChatMessage({
           </svg>
         ) : (
           <img
-            src="/logo-icon.png"
+            src="/logo-brand.png"
             alt="EL Assistant"
             className={styles.assistantAvatarImg}
           />
