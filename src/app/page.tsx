@@ -586,11 +586,11 @@ export default function ChatPage() {
       {/* ── Main Chat Area ────────────────────────────────────────── */}
       <main className="flex-1 flex flex-col w-full h-full h-dvh min-h-0 min-w-0 relative overflow-hidden bg-[#FAF9F6] dark:bg-[#0D0B0A]">
         {/* Minimalist Sticky Header with Exposed 1px Bottom Border */}
-        <header className="sticky top-0 z-20 flex items-center justify-between px-2.5 sm:px-6 h-14 border-b border-[#ECE6DE] dark:border-[#2A2420] bg-[#FAF9F6]/90 dark:bg-[#0D0B0A]/90 backdrop-blur-md flex-shrink-0">
-          <div className="flex items-center gap-3.5">
+        <header className="sticky top-0 z-20 flex items-center justify-between px-2 sm:px-6 h-14 border-b border-[#ECE6DE] dark:border-[#2A2420] bg-[#FAF9F6]/90 dark:bg-[#0D0B0A]/90 backdrop-blur-md flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
             {/* Sidebar Toggle */}
             <button
-              className="p-1.5 border border-[#ECE6DE] dark:border-[#2A2420] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#141210] dark:text-[#FAF7F2]"
+              className="p-1.5 border border-[#ECE6DE] dark:border-[#2A2420] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#141210] dark:text-[#FAF7F2] flex-shrink-0"
               onClick={() => setSidebarOpen(!sidebarOpen)}
               title={sidebarOpen ? t.sidebar.closeSidebar : t.sidebar.openSidebar}
               type="button"
@@ -602,7 +602,7 @@ export default function ChatPage() {
             </button>
 
             {/* Logo Emblem & Wordmark */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden border border-[#FF8C00]/30 shadow-[0_0_10px_rgba(255,140,0,0.2)] flex-shrink-0 bg-black">
                 <img
                   src="/logo-brand.png"
@@ -621,22 +621,25 @@ export default function ChatPage() {
             </div>
 
             {/* Live Status Beacon with Golden Sunrise Aura */}
-            <div className="flex items-center gap-1.5 sm:gap-2 pl-2 sm:pl-3 border-l border-[#ECE6DE] dark:border-[#2A2420]">
+            <div
+              className="flex items-center gap-1.5 sm:gap-2 pl-2 sm:pl-3 border-l border-[#ECE6DE] dark:border-[#2A2420] flex-shrink-0"
+              title={`Operational · 14ms · ${timeUtc || ""}`}
+            >
               <span className="relative flex h-2 w-2 flex-shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFD700] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF8C00]"></span>
               </span>
-              <span className="font-mono text-[10px] uppercase text-[#EA580C] dark:text-[#FFB74D] font-medium tracking-tight whitespace-nowrap">
-                Operational <span className="hidden sm:inline">· 14ms</span>
+              <span className="hidden md:inline font-mono text-[10px] uppercase text-[#EA580C] dark:text-[#FFB74D] font-medium tracking-tight whitespace-nowrap">
+                Operational <span className="hidden lg:inline">· 14ms</span>
               </span>
-              <span className="hidden sm:inline font-mono text-[10px] text-[#79716B] dark:text-[#9E968F] tabular-nums pl-1 whitespace-nowrap">
+              <span className="hidden lg:inline font-mono text-[10px] text-[#79716B] dark:text-[#9E968F] tabular-nums pl-1 whitespace-nowrap">
                 · {timeUtc || "07:30:00 UTC"}
               </span>
             </div>
           </div>
 
           {/* Header Controls Right Cluster */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-shrink-0">
             {/* Active Gem Skill Pill with Golden Sunrise Accent */}
             {activeGem && (
               <button
@@ -678,18 +681,18 @@ export default function ChatPage() {
             <button
               onClick={() => setLanguage(settings.language === "en" ? "id" : "en")}
               type="button"
-              className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-mono font-medium border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded"
+              className="inline-flex items-center justify-center p-1.5 sm:px-2 sm:py-1.5 text-xs font-mono font-medium border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#141210] dark:text-[#FAF7F2] flex-shrink-0"
               title="Toggle Language (ID / EN)"
             >
               <Globe className="w-3.5 h-3.5 opacity-70" />
-              <span>{settings.language.toUpperCase()}</span>
+              <span className="hidden sm:inline">{settings.language.toUpperCase()}</span>
             </button>
 
             {/* Dark / Light Toggle */}
             <button
               onClick={toggleTheme}
               type="button"
-              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
+              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA] flex-shrink-0"
               title={settings.theme === "dark" ? "Light Mode" : "Dark Mode"}
             >
               {settings.theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
@@ -697,7 +700,7 @@ export default function ChatPage() {
 
             {/* Settings Modal Toggle */}
             <button
-              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA]"
+              className="p-1.5 border border-[#E5E5E0] dark:border-[#27272A] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors rounded text-[#111111] dark:text-[#FAFAFA] flex-shrink-0"
               onClick={() => setSettingsOpen(true)}
               title={t.settings.title}
               type="button"
@@ -881,7 +884,7 @@ export default function ChatPage() {
         )}
 
         {/* ── Input Area with Exposed 1px Top Border ──────────────── */}
-        <div className="border-t border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md pt-2 sm:pt-3 pb-2 sm:pb-4">
+        <div className="border-t border-[#E5E5E0] dark:border-[#27272A] bg-[#F9F9F8]/90 dark:bg-[#09090B]/90 backdrop-blur-md pt-2 sm:pt-3 pb-2 sm:pb-4 flex-shrink-0">
           <ChatInput
             value={inputDraft}
             onChange={setInputDraft}

@@ -5,7 +5,7 @@
  */
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import type { TranslationDictionary } from "@/i18n/translations";
 import type { AttachedDoc } from "@/hooks/use-chat";
 import {
@@ -151,15 +151,18 @@ export default function ChatInput({
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
-    // When text or attachment context is present, expand to ~5 lines (~108px) for clear multiline visibility
-    const minH = hasContent ? 108 : 24;
-    const targetH = Math.max(minH, Math.min(textarea.scrollHeight, 240));
+    // Start at 1 single line (~24px) and expand smoothly 1 by 1 as text overflows, up to ~5 lines (~125px)
+    const singleLineH = 24;
+    const maxH = 125; // ~5 lines limit
+    const scrollH = textarea.scrollHeight;
+    const targetH = Math.max(singleLineH, Math.min(scrollH, maxH));
     textarea.style.height = `${targetH}px`;
-  }, [hasContent]);
+    textarea.style.overflowY = scrollH > maxH ? "auto" : "hidden";
+  }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     adjustHeight();
-  }, [value, hasContent, adjustHeight]);
+  }, [value, adjustHeight]);
 
   // Handle incoming image files
   const processImageFiles = useCallback(async (imageFiles: File[]) => {
@@ -573,28 +576,26 @@ export default function ChatInput({
                   <span className={styles.mediaOptionArrow}>→</span>
                 </button>
 
-                {/* 5. Tulis / Tempel Teks Panjang (5 Baris) */}
+                {/* 5. Tulis / Fokus Input */}
                 <button
                   type="button"
                   className={styles.mediaOptionBtn}
                   onClick={() => {
                     setIsMediaMenuOpen(false);
-                    if (!value) {
-                      setValue(" ");
-                    }
                     setTimeout(() => textareaRef.current?.focus(), 50);
                   }}
                 >
                   <div className={styles.mediaOptionIcon}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="4 7 4 4 20 4 20 7" />
-                      <line x1="9" y1="20" x2="15" y2="20" />
-                      <line x1="12" y1="4" x2="12" y2="20" />
+                      <line x1="17" y1="10" x2="3" y2="10" />
+                      <line x1="21" y1="6" x2="3" y2="6" />
+                      <line x1="21" y1="14" x2="3" y2="14" />
+                      <line x1="17" y1="18" x2="3" y2="18" />
                     </svg>
                   </div>
                   <div className={styles.mediaOptionInfo}>
-                    <span className={styles.mediaOptionTitle}>Mode Tulis 5 Baris (Composer)</span>
-                    <span className={styles.mediaOptionDesc}>Buka area input lapang untuk menyusun prompt panjang</span>
+                    <span className={styles.mediaOptionTitle}>Tulis Prompt / Pesan</span>
+                    <span className={styles.mediaOptionDesc}>Fokuskan kursor ke area pengetikan pesan</span>
                   </div>
                   <span className={styles.mediaOptionArrow}>→</span>
                 </button>
@@ -682,17 +683,20 @@ export default function ChatInput({
             </div>
           )}
 
-          {/* Text Area (Expands to ~5 lines when text is present) */}
+          {/* Text Area (Expands dynamically 1 by 1 line as text overflows, max 5 lines) */}
           <textarea
             ref={textareaRef}
             id="chat-input"
-            className={`${styles.textarea} ${hasContent ? styles.textareaExpanded : ""}`}
+            className={styles.textarea}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => {
+              setValue(e.target.value);
+              adjustHeight();
+            }}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             placeholder={placeholder || t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
-            rows={hasContent ? 5 : 1}
+            rows={1}
             maxLength={MAX_CHAR_LIMIT}
             disabled={disabled}
             aria-label={placeholder || t?.inputPlaceholder || "Tanyakan apa saja atau minta kode..."}
